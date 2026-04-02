@@ -1,0 +1,29 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="SaasPrint" type="Application" factoryName="Application">
+    <option name="ALTERNATIVE_JRE_PATH" value="23" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <envs>
+      <env name="AWS_ACCESS_KEY" value="AKIASOPQLMH6JHZ4UT54" />
+      <env name="AWS_SECRET_KEY" value="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" />
+      <env name="AWS_REGION" value="eu-north-1" />
+      <env name="AWS_BUCKET" value="meatbuckett" />
+      <env name="MAIL_USERNAME" value="acashgupta960@gmail.com" />
+      <env name="MAIL_PASSWORD" value="plloifeusbcgotcc" />
+      <env name="DB_HOST" value="localhost" />
+      <env name="DB_PORT" value="5432" />
+      <env name="DB_NAME" value="saasprint" />
+      <env name="DB_USER" value="postgres" />
+      <env name="DB_PASS" value="guptapc123" />
+    </envs>
+    <option name="MAIN_CLASS_NAME" value="com.akashgpt.saasprint.SaasprintApplication" />
+    <module name="saasprint" />
+    <extension name="software.aws.toolkits.jetbrains.core.execution.JavaAwsConnectionExtension">
+      <option name="credential" />
+      <option name="region" />
+      <option name="useCurrentConnection" value="false" />
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
