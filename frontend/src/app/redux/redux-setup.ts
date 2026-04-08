@@ -5,24 +5,13 @@ import { FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from "redux-persist
 import createWebStorage from "redux-persist/es/storage/createWebStorage";
 
 
-export type InitialsD = {
-    token: string | null;
-    googleVerified: string | null;
-    isPremium: boolean,
-    isLoggedIn: boolean,
-    isUserSeller: boolean,
-    userId : string
-    userEmail : string
+export type Data = {
+    token: string | null
 }
 
-const initialState: InitialsD = {
+const initialState: Data = {
     token: null,
-    googleVerified: null,
-    isPremium: false,
-    isLoggedIn: false,
-    isUserSeller: false,
-    userId : "",
-    userEmail : ""
+
 }
 
 interface Storage {
@@ -57,29 +46,12 @@ const dataState = createSlice({
         setToken: (state, action: PayloadAction<string>) => {
             state.token = action.payload;
         },
-        setGoogleVerified: (state, action: PayloadAction<string>) => {
-            state.googleVerified = action.payload;
-        },
-        setPremium: (state, action: PayloadAction<boolean>) => {
-            state.isPremium = action.payload
-        },
-        setisLoggedIn: (state, action: PayloadAction<boolean>) => {
-            state.isLoggedIn = action.payload
-        },
-        setUserSeller: (state, action: PayloadAction<boolean>) => {
-            state.isUserSeller = action.payload
-        },
-        setUserId: (state, action: PayloadAction<string>) => {
-            state.userId = action.payload
-        },
-        setUserEmail: (state, action: PayloadAction<string>) => {
-            state.userEmail = action.payload
-        },
+      
         
     }
 });
 
-export const { setToken, setGoogleVerified, setPremium , setisLoggedIn, setUserSeller, setUserId ,setUserEmail } = dataState.actions;
+export const { setToken} = dataState.actions;
 
 const rootReducer = combineReducers({
     data: dataState.reducer,
@@ -109,4 +81,3 @@ export const persistor = persistStore(store2);
 export type RootState = ReturnType<typeof store2.getState>;
 export type AppDispatch = typeof store2.dispatch;
 
-// ---
