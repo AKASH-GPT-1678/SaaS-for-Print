@@ -1,61 +1,120 @@
 import React from "react";
 import { FaRegUser } from "react-icons/fa";
-import { Button, TextField } from "@mui/material";
+import { Button} from "@mui/material";
 import { BiMessageDetail } from "react-icons/bi";
 import { FaLock } from "react-icons/fa";
-
+import CustomInput from "@/lib/Input";
+import SocialMedia from "@/lib/socials";
+import axios from "axios";
 const SignUpBoard = () => {
+  const [username, setUsername] = React.useState("");
+  const [email , setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const registerUser = async () => {
+    if (username && password) {
+        try {
+            const response = await axios.post('http://localhost:8080/register', {
+              email,
+                username,
+                password
+            });
+
+            console.log(response.data);
+        } catch (error : any) {
+            console.error(error.response?.data || error.message);
+        }
+    }
+};
   return (
-    <div>
-      <div className="flex  justify-center">
-        <div>
-          <div>
-            <h1 className="text-2xl font-semibold">Welcome to our CRM </h1>
-            <h1 className="text-2xl font-semibold">
-              SignUp for getting started
-            </h1>
-            <p className="mt-1 text-sm text-gray-400">
-              Enter your details to proceed further
-            </p>
-          </div>
-          <div className="mt-10 flex flex-col gap-4">
-            <div className="flex flex-row items-center gap-2 mt-1">
-              <TextField
-                id="standard-basic"
+    <div className="w-full h-screen flex items-center justify-center ">
+      
+      {/* Outer Box */}
+      <div className="flex flex-row border-2 w-[60%] h-[80%] rounded-xl">
+        
+        {/* LEFT SIDE (50%) */}
+        <div className="flex flex-col items-center justify-center w-[50%] px-10">
+          
+          <div className="w-full max-w-md">
+            
+            {/* Heading */}
+            <div>
+              <h1 className="text-2xl font-semibold">
+                Welcome to our CRM
+              </h1>
+              <h1 className="text-2xl font-semibold">
+                SignUp for getting started
+              </h1>
+              <p className="mt-1 text-sm text-gray-400">
+                Enter your details to proceed further
+              </p>
+            </div>
+
+            {/* Inputs */}
+            <div className="mt-10 flex flex-col gap-4">
+              <CustomInput
                 label="Full Name"
-                variant="standard"
-                className="w-sm"
+                placeholder="Enter your name"
+                type="text"
+                icon={FaRegUser}
+                onChange={(e)=> setUsername(e.target.value)}
+                
               />
-              <FaRegUser size={18} />
-            </div>
-            <div className="flex flex-row items-center gap-2 mt-1">
-              <TextField
-                id="standard-basic"
+
+              <CustomInput
                 label="Email"
-                variant="standard"
-                className="w-sm"
+                placeholder="Enter your email"
+                type="email"
+                icon={BiMessageDetail}
+                onChange={(e)=> setEmail(e.target.value)}
               />
-              <BiMessageDetail size={18} />
-            </div>
-            <div className="flex flex-row items-center gap-2 mt-1">
-              <TextField
-                id="standard-basic"
+
+              <CustomInput
                 label="Password"
-                variant="standard"
-                className="w-sm"
+                placeholder="Enter your password"
+                type="password"
+                icon={FaLock}
+                onChange={(e)=> setPassword(e.target.value)}
               />
-              <FaLock size={18} />
             </div>
-          </div>
-          <div className="flex flex-row gap-2 mt-6">
-            <input type="radio" className="scale-140" />
-            <p className="text-sm font-bold font-serif">I agree to the terms and conditions</p>
-          </div>
-          <div>
-            <Button className="p-2 bg-blue-400">Sign Up</Button>
-            <Button>Cancel</Button>
+
+            {/* Terms */}
+            <div className="flex flex-row gap-2 mt-6 items-center">
+              <input type="radio" className="scale-125 accent-blue-700" />
+              <p className="text-sm font-semibold">
+                I agree to the terms and conditions
+              </p>
+            </div>
+
+            {/* Buttons */}
+            <div className="mt-8 flex flex-row gap-4">
+              <Button
+                variant="contained"
+                className="p-2 bg-blue-500 w-full text-white"
+                onClick={registerUser}
+              >
+                Sign Up
+              </Button>
+              <Button variant="outlined" className="w-full">
+                Sign In
+              </Button>
+            </div>
+
+            {/* Social */}
+            <SocialMedia />
+
           </div>
         </div>
+
+        {/* RIGHT SIDE (50% IMAGE PANEL) */}
+        <div
+          className="w-[50%] h-full hidden md:block rounded-2xl"
+          style={{
+            backgroundImage: "url('/table.png')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        ></div>
+
       </div>
     </div>
   );
