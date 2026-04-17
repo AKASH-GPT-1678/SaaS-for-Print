@@ -6,10 +6,13 @@ import { FaLock } from "react-icons/fa";
 import CustomInput from "@/lib/Input";
 import SocialMedia from "@/lib/socials";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 const SignUpBoard = () => {
   const [username, setUsername] = React.useState("");
   const [email , setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [passwordType , setPasswordType] = React.useState(true);
+  const router = useRouter();
   const registerUser = async () => {
     if (username && password) {
         try {
@@ -20,6 +23,9 @@ const SignUpBoard = () => {
             });
 
             console.log(response.data);
+            if(response.data.success){
+                router.push('/login');
+            }
         } catch (error : any) {
             console.error(error.response?.data || error.message);
         }
@@ -68,13 +74,30 @@ const SignUpBoard = () => {
                 onChange={(e)=> setEmail(e.target.value)}
               />
 
-              <CustomInput
-                label="Password"
-                placeholder="Enter your password"
-                type="password"
-                icon={FaLock}
-                onChange={(e)=> setPassword(e.target.value)}
-              />
+                <div className="flex flex-col mt-2">
+      <label htmlFor="input" className="text-gray-400">
+        Password
+        
+      </label>
+
+      <div className="flex flex-row justify-between items-center">
+        <input
+          type={passwordType ? "password" : "text"}
+          id="input"
+          placeholder={"Enter your password"}
+          className="outline-none"
+          onChange={(e) => setPassword(e.target.value)}
+        />
+
+        <FaLock
+          size={18}
+          className="cursor-pointer"
+          onClick={() => setPasswordType(!passwordType)}
+        />
+      </div>
+
+      <hr className="mt-2" />
+    </div>
             </div>
 
             {/* Terms */}
@@ -94,7 +117,7 @@ const SignUpBoard = () => {
               >
                 Sign Up
               </Button>
-              <Button variant="outlined" className="w-full">
+              <Button variant="outlined" className="w-full" onClick={()=>router.push("/login")}>
                 Sign In
               </Button>
             </div>

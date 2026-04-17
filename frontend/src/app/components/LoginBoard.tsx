@@ -4,9 +4,15 @@ import CustomInput from "@/lib/Input";
 import React from "react";
 import SocialMedia from "@/lib/socials";
 import axios from "axios";
+import { useAppDispatch } from "@/lib/hooks";
+import { setToken } from "../redux/redux-setup";
+import { useRouter } from "next/navigation";
 const LoginPage = () => {
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+
 
   const loginUser = async () => {
     try {
@@ -15,6 +21,11 @@ const LoginPage = () => {
         password,
       });
       console.log(response.data);
+      if(response.data.token != null){
+        dispatch(setToken(response.data.token));
+        router.push('/');
+        
+      }
     } catch (error : any) {
       console.error(error.response?.data || error.message);
     }

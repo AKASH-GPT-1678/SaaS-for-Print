@@ -1,5 +1,6 @@
 // redux-persist.ts (Fixed Redux Store)
 import { combineReducers, configureStore, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { get } from "http";
 import { persistReducer, persistStore } from "redux-persist";
 import { FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from "redux-persist";
 import createWebStorage from "redux-persist/es/storage/createWebStorage";
@@ -46,12 +47,13 @@ const dataState = createSlice({
         setToken: (state, action: PayloadAction<string>) => {
             state.token = action.payload;
         },
+
       
         
     }
 });
 
-export const { setToken} = dataState.actions;
+export const { setToken } = dataState.actions;
 
 const rootReducer = combineReducers({
     data: dataState.reducer,

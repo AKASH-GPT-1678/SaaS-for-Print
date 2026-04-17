@@ -1,6 +1,8 @@
 package com.akashgpt.saasprint.controller;
 
 import com.akashgpt.saasprint.model.User;
+import com.akashgpt.saasprint.model.response.LoginData;
+import com.akashgpt.saasprint.model.response.RegisterUser;
 import com.akashgpt.saasprint.service.JwtService;
 import com.akashgpt.saasprint.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +27,13 @@ public class UserController {
     AuthenticationManager authenticationManager;
 
     @PostMapping("register")
-    public User register(@RequestBody User users){
-        return userService.saveUser(users);
+    public RegisterUser register(@RequestBody User users){
+
+
+        User user = userService.saveUser(users);
+        RegisterUser user1 = new RegisterUser("User Registered Successfully" , true , user.getEmail() );
+        return user1;
+
     }
 
     @GetMapping("/oauth-success")
@@ -43,13 +50,18 @@ public class UserController {
     }
 
     @PostMapping("login")
-    public String login(@RequestBody User user){
+    public LoginData login(@RequestBody User user){
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
         if(authentication.isAuthenticated()){
-            return jwtService.generateToken(user.getUsername());
+            LoginData data = new LoginData();
+            data.setToken(  jwtService.generateToken(user.getUsername()));
+            data.setEmail(user.getEmail());
+            data.setRemarks("User Logged in Successfully");
+            return data;
+
         }
         else
-            return "Login Failed";
+            return null;
 
     }
 
