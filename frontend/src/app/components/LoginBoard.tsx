@@ -10,40 +10,36 @@ import { useRouter } from "next/navigation";
 const LoginPage = () => {
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [passwordType, setPasswordType] = React.useState(true);
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-
   const loginUser = async () => {
     try {
-      const response = await axios.post("http://localhost:8080/login", {
+      const response = await axios.post("http://localhost:8080/auth/login", {
         username,
         password,
       });
       console.log(response.data);
-      if(response.data.token != null){
+      if (response.data.token != null) {
         dispatch(setToken(response.data.token));
-        router.push('/');
-        
+        router.push("/");
       }
-    } catch (error : any) {
+    } catch (error: any) {
       console.error(error.response?.data || error.message);
     }
   };
+
   return (
     <div className="w-full h-screen flex items-center justify-center">
       <div className="flex flex-row border-2 w-[60%] h-[80%]">
-        
         {/* LEFT SIDE (FORM - 60%) */}
         <div className="flex flex-col items-center justify-center w-[60%]">
           <div className="flex flex-col">
-            
             {/* Heading */}
             <div>
               <h2 className="text-3xl font-bold">Welcome back 👋</h2>
-              <h2 className="text-3xl font-bold">
-                Sign in to your account
-              </h2>
+              <h2 className="text-3xl font-bold">Sign in to your account</h2>
               <p className="font-semibold text-gray-400">
                 Enter your details to proceed
               </p>
@@ -59,13 +55,29 @@ const LoginPage = () => {
                 onChange={(e) => setUsername(e.target.value)}
               />
 
-              <CustomInput
-                label="Password"
-                placeholder="Enter password"
-                type="password"
-                icon={FaLock}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+              <div className="flex flex-col mt-2">
+                <label htmlFor="input" className="text-gray-400">
+                  Password
+                </label>
+
+                <div className="flex flex-row justify-between items-center">
+                  <input
+                    type={passwordType ? "password" : "text"}
+                    id="input"
+                    placeholder={"Enter your password"}
+                    className="outline-none"
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+
+                  <FaLock
+                    size={18}
+                    className="cursor-pointer"
+                    onClick={() => setPasswordType(!passwordType)}
+                  />
+                </div>
+
+                <hr className="mt-2" />
+              </div>
             </div>
 
             {/* Remember + Recover */}
@@ -82,7 +94,10 @@ const LoginPage = () => {
 
             {/* Button */}
             <div>
-              <button className="bg-blue-500 mt-6 text-white w-full p-2 rounded-lg cursor-pointer hover:bg-blue-600" onClick={loginUser}>
+              <button
+                className="bg-blue-500 mt-6 text-white w-full p-2 rounded-lg cursor-pointer hover:bg-blue-600"
+                onClick={loginUser}
+              >
                 Sign In
               </button>
 

@@ -1,6 +1,8 @@
 package com.akashgpt.saasprint.controller;
 
-import com.akashgpt.saasprint.model.User;
+import com.akashgpt.saasprint.model.db.User;
+import com.akashgpt.saasprint.model.request.LoginUserRequest;
+import com.akashgpt.saasprint.model.request.RegisterUserRequest;
 import com.akashgpt.saasprint.model.response.LoginData;
 import com.akashgpt.saasprint.model.response.RegisterUser;
 import com.akashgpt.saasprint.service.JwtService;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
+@RequestMapping("/auth")
 public class UserController {
 
     @Autowired
@@ -27,7 +30,7 @@ public class UserController {
     AuthenticationManager authenticationManager;
 
     @PostMapping("register")
-    public RegisterUser register(@RequestBody User users){
+    public RegisterUser register(@RequestBody RegisterUserRequest users){
 
 
         User user = userService.saveUser(users);
@@ -49,13 +52,15 @@ public class UserController {
         return token;
     }
 
-    @PostMapping("login")
-    public LoginData login(@RequestBody User user){
+    @PostMapping("/login")
+    public LoginData login(@RequestBody LoginUserRequest user){
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
         if(authentication.isAuthenticated()){
             LoginData data = new LoginData();
-            data.setToken(  jwtService.generateToken(user.getUsername()));
-            data.setEmail(user.getEmail());
+            String token = jwtService.generateToken(user.getUsername());
+            System.out.println(token);
+            data.setToken(token  );
+
             data.setRemarks("User Logged in Successfully");
             return data;
 

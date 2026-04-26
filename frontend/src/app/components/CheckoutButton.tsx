@@ -5,37 +5,37 @@ import { createOrderId } from "@/lib/orderid";
 import axios from "axios";
 import Script from "next/script";
 import toast from 'react-hot-toast'
+import { useAppSelector } from "@/lib/hooks";
 
 
 export default function CheckoutButton() {
   const [loading, setLoading] = useState(false);
   const [price, setprice] = React.useState(10);
   const [show, setShow] = React.useState(false);
-  // const token = useAppSelector((state) => state.data.token);
-  // const isVerified = useAppSelector((state) => state.data.isLoggedIn);
-  const endpoint = process.env.NEXT_PUBLIC_BACKEND_URL;
-  // async function updateStatus(amount: string, order_id: string) {
-  //   try {
-  //     const updateStatus = await axios.post(
-  //       `${endpoint}/auth/addSubscription`,
-  //       {
-  //         amount: amount,
-  //         order_id: order_id
-  //       },
-  //       {
-  //         headers: {
-  //           "Authorization": `Bearer ${token}`,
-  //           "Content-Type": "application/json"
-  //         }
-  //       }
-  //     );
-  //     console.log(updateStatus.data);
-  //     return updateStatus;
+  const token = useAppSelector((state) => state.data.token);
 
-  //   } catch (error) {
-  //     console.error("Error verifying order:", error);
-  //   }
-  // }
+  const endpoint = process.env.NEXT_PUBLIC_BACKEND_URL;
+async function updateStatus() {
+  try {
+    const response = await axios.post(
+      "http://localhost:8080/qr/qrstats",
+      {}, // empty body
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    console.log(response.data);
+    return response.data;
+
+  } catch (error :any) {
+    console.error("Error updating status:", error.response?.data || error.message);
+    throw error;
+  }
+}
 
 
 
@@ -70,7 +70,7 @@ export default function CheckoutButton() {
             alert("Payment Successful!");
             console.log(paymentResponse.data);
 
-            // await updateStatus(price.toString(), response.razorpay_order_id);
+            await updateStatus();
           } catch (error) {
             alert("Payment verification failed. Please contact support.");
             console.error(error);
@@ -103,7 +103,7 @@ export default function CheckoutButton() {
         onClick={handlePayment}
         disabled={loading}
       >
-        {loading ? "Processing..." : "Premium"}
+        {loading ? "Processing..." : "Generate QR Tokens"}
       </button>
 
       

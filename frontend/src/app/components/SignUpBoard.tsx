@@ -30,7 +30,7 @@ const SignUpBoard = () => {
             console.error(error.response?.data || error.message);
         }
     }
-};
+  };
   return (
     <div className="w-full h-screen flex items-center justify-center ">
       

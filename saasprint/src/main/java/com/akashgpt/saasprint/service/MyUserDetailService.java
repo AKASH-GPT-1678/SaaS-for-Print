@@ -1,7 +1,7 @@
 package com.akashgpt.saasprint.service;
 
 import com.akashgpt.saasprint.model.UserPrincipal;
-import com.akashgpt.saasprint.model.User;
+import com.akashgpt.saasprint.model.db.User;
 import com.akashgpt.saasprint.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 

@@ -1,5 +1,6 @@
 package com.akashgpt.saasprint.model;
 
+import com.akashgpt.saasprint.model.db.User;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

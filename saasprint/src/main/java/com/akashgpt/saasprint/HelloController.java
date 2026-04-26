@@ -1,6 +1,6 @@
 package com.akashgpt.saasprint;
 
-import com.akashgpt.saasprint.model.User;
+import com.akashgpt.saasprint.model.db.User;
 import com.akashgpt.saasprint.service.MyUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
