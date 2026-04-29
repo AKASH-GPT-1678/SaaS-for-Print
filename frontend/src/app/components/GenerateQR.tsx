@@ -3,7 +3,11 @@ import axios from "axios";
 import React from "react";
 import CheckoutButton from "./CheckoutButton";
 import { useAppSelector } from "@/lib/hooks";
-const GenerateQR = () => {
+
+interface QRProps {
+  closeModal: React.Dispatch<React.SetStateAction<boolean>>;
+}
+const GenerateQR : React.FC<QRProps> = ({closeModal}) => {
   const [qrCode, setQrCode] = React.useState(false);
   const [qrCodeUrl, setQrCodeUrl] = React.useState("");
   const [numOFQR, setnumOFQR] = React.useState(0);
@@ -80,19 +84,22 @@ const GenerateQR = () => {
         </h2>
 
         <img
-          src={qrCode ? qrCodeUrl : "infosys.jpeg"}
+          src={qrCode ? qrCodeUrl : "question.png"}
           alt="QR Code"
-          className="w-[250px] h-[250px] object-cover rounded-lg border"
+          className="w-[250px] h-[250px] object-cover rounded-lg border cursor-pointer"
         />
 
         {numOFQR > 0 ? <QRCodeGenButton /> : <CheckoutButton />}
 
-        <button className="cursor-pointer bg-blue-500 p-2 px-4 text-white" onClick={downLoadQRCode}>
+        <button className="cursor-pointer bg-blue-500 p-2 px-4 text-white font-bold" onClick={downLoadQRCode}>
           Download QR Code
         </button>
 
         {/* Close Button */}
-        <button className="absolute top-3 right-3 text-gray-500 hover:text-black text-xl">
+        <button className="absolute top-3 right-3 text-gray-500 hover:text-black text-xl cursor-pointer"
+      
+        onClick={() => closeModal(false)}
+        >
           ✕
         </button>
       </div>
