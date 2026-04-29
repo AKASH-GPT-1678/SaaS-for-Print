@@ -11,10 +11,10 @@ import { useAppSelector } from "@/lib/hooks";
 export default function CheckoutButton() {
   const [loading, setLoading] = useState(false);
   const [price, setprice] = React.useState(10);
-  const [show, setShow] = React.useState(false);
+
   const token = useAppSelector((state) => state.data.token);
 
-  const endpoint = process.env.NEXT_PUBLIC_BACKEND_URL;
+
 async function updateStatus() {
   try {
     const response = await axios.post(
