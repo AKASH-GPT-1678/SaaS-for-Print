@@ -4,6 +4,7 @@ import BeigeBack from "../../../public/seige_back.png";
 import Header from "../landing/Header";
 import MidSection from "../landing/MidSection";
 import TrustedCompanies from "../landing/trusted";
+import ProductPage from "../landing/Product";
 const DashBoard = () => {
   const token = useAppSelector((state) => state.data.token);
   return (
@@ -26,6 +27,7 @@ const DashBoard = () => {
 
   {/* Trusted Companies Section */}
   <TrustedCompanies />
+  <ProductPage />
 </div>
   );
 }
