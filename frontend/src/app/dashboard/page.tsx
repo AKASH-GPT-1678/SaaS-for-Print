@@ -5,6 +5,10 @@ import Header from "../landing/Header";
 import MidSection from "../landing/MidSection";
 import TrustedCompanies from "../landing/trusted";
 import ProductPage from "../landing/Product";
+import CustomerStory from "../landing/CustomerStory";
+import SecuritySection from "../landing/SecuritySection";
+import BlogSection from "../landing/BlogSection";
+import FooterCTA from "../landing/FooterCTA";
 const DashBoard = () => {
   const token = useAppSelector((state) => state.data.token);
   return (
@@ -13,9 +17,9 @@ const DashBoard = () => {
   <div className="bg-amber-50 w-full min-h-screen">
     <Header />
 
-    <div className="flex items-center justify-center">
+   
       <MidSection />
-    </div>
+
 
     <div
       className="h-100 w-full bg-cover bg-center bg-no-repeat"
@@ -28,6 +32,10 @@ const DashBoard = () => {
   {/* Trusted Companies Section */}
   <TrustedCompanies />
   <ProductPage />
+  <CustomerStory />
+  <SecuritySection />
+  <BlogSection />
+  <FooterCTA/>
 </div>
   );
 }
