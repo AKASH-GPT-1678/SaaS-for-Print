@@ -12,6 +12,7 @@ const QRCodePage = () => {
 
     <div>
       <div>
+      
 
       </div>
       <div>

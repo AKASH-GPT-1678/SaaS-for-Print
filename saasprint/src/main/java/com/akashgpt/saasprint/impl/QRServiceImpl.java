@@ -12,21 +12,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class QRServiceImpl implements QRService {
-    @Autowired
-    private UserRepo userRepo;
-    /**
-     * @return
-     */
-    @Override
-    public QRTokensResponse numOfTokens() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String name = authentication.getName();
-        User user
-                = userRepo.findByUsername(name);
-        QRTokensResponse response = new QRTokensResponse();
-        response.setQrTokens(user.getQrToken());
-        response.setUserId(user.getId());
-        response.setUserName(user.getUsername());
-        return response;
-    }
+
+
 }

@@ -89,7 +89,7 @@ const GenerateQR : React.FC<QRProps> = ({closeModal}) => {
           className="w-[250px] h-[250px] object-cover rounded-lg border cursor-pointer"
         />
 
-        {numOFQR > 0 ? <QRCodeGenButton /> : <CheckoutButton />}
+        {numOFQR == 0 ? <CheckoutButton /> : <></>}
 
         <button className="cursor-pointer bg-blue-500 p-2 px-4 text-white font-bold" onClick={downLoadQRCode}>
           Download QR Code

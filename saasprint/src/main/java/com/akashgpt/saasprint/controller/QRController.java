@@ -1,7 +1,7 @@
 package com.akashgpt.saasprint.controller;
 
 
-import com.akashgpt.saasprint.model.db.Payments;
+
 import com.akashgpt.saasprint.model.db.User;
 import com.akashgpt.saasprint.model.response.QRTokensResponse;
 import com.akashgpt.saasprint.repository.UserRepo;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/qr")
@@ -39,9 +40,12 @@ public class QRController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String name = authentication.getName();
         User user = userRepo.findByUsername(name);
-        if (user.getQrToken() >0){
-            user.setQrToken(user.getQrToken() -1);
-        }
+        UUID uuid = user.getId();
+        String qrUrl = "https://saa-s-for-print.vercel.app/chat/" + uuid ;
+        user.setQrCodeUrl(url);
+
+
+
 
 
 
@@ -53,23 +57,17 @@ public class QRController {
 
     }
 
-    @PostMapping("qrstats")
-    public void updateQRCount(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String name = authentication.getName();
-        User user = userRepo.findByUsername(name);
-        user.setQrToken(user.getQrToken() + 1);
-        userRepo.save(user);
-        Payments payments = new Payments();
+//    @PostMapping("qrstats")
+//    public void updateQRCount(){
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String name = authentication.getName();
+//        User user = userRepo.findByUsername(name);
+//        user.setQrToken(user.getQrToken() + 1);
+//        userRepo.save(user);
+//        Payments payments = new Payments();
+//
+//
+//    }
 
-
-    }
-    @GetMapping("get_qr_tokens")
-    public ResponseEntity<QRTokensResponse> getNumOFTokens(){
-        QRTokensResponse response = qrService.numOfTokens();
-        return ResponseEntity.ok(response);
-
-
-    }
 
 }

@@ -15,28 +15,26 @@ export default function CheckoutButton() {
   const token = useAppSelector((state) => state.data.token);
 
 
-async function updateStatus() {
-  try {
-    const response = await axios.post(
-      "http://localhost:8080/qr/qrstats",
-      {}, // empty body
-      {
+  const generateQRCode = async () => {
+    const url = "https://web.whatsapp.com/";
+
+    try {
+      const response = await axios.get("http://localhost:8080/qr/generate", {
+        params: { url },
+        responseType: "blob", // IMPORTANT for image
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
         },
-      }
-    );
+      });
 
-    console.log(response.data);
-    return response.data;
 
-  } catch (error :any) {
-    console.error("Error updating status:", error.response?.data || error.message);
-    throw error;
-  }
-}
+      const imageUrl = URL.createObjectURL(response.data);
+   
 
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
 
   const handlePayment = async () => {
@@ -70,7 +68,7 @@ async function updateStatus() {
             alert("Payment Successful!");
             console.log(paymentResponse.data);
 
-            await updateStatus();
+            await generateQRCode();
           } catch (error) {
             alert("Payment verification failed. Please contact support.");
             console.error(error);
@@ -103,7 +101,7 @@ async function updateStatus() {
         onClick={handlePayment}
         disabled={loading}
       >
-        {loading ? "Processing..." : "Generate QR Tokens"}
+        {loading ? "Processing..." : "Generate QR"}
       </button>
 
       
