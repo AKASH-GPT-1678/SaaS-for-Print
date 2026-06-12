@@ -14,6 +14,8 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+//     'https://*.clerk.accounts.dev', 
+
 export const metadata: Metadata = {
   title: "SaasPrint",
   description: "Software for making",

@@ -15,7 +15,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 
-@CrossOrigin(origins =  "https://saa-s-for-print-qf7asv57v-akash-gupta-s-projects-b3af644f.vercel.app")
+@CrossOrigin(origins =  "http://localhost:3000")
 @RestController
 @RequestMapping("/auth")
 public class UserController {
@@ -29,7 +29,7 @@ public class UserController {
     @Autowired
     AuthenticationManager authenticationManager;
 
-    @PostMapping("register")
+    @PostMapping("/register")
     public RegisterUser register(@RequestBody RegisterUserRequest users){
 
 
