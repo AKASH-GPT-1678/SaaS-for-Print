@@ -1,5 +1,7 @@
 import Image from "next/image";
 import Logo from "../../../public/logo_bgg.png";
+import CheckoutButton from "../components/CheckoutButton";
+import Link from "next/link";
 const Header = () => {
   const links = [
     "Product",
@@ -24,18 +26,37 @@ const Header = () => {
 
       <div className="flex flex-row gap-4"></div>
 
-      <div className="flex items-center gap-10">
-        {links.map((link) => (
-          <a key={link} href="#" className="font-bold">
-            {link}
-          </a>
-        ))}
-      </div>
+<div className="flex items-center gap-10">
+  <Link href="dashboard" className="font-bold">
+    Product
+  </Link>
 
-      <button className="flex items-center gap-2 rounded-full bg-black px-6 py-3 text-white font-medium">
+  <Link href="#" className="font-bold">
+    Use Cases
+  </Link>
+
+  <Link href="#" className="font-bold">
+    Customers
+  </Link>
+
+  <Link href="#" className="font-bold">
+    Blog
+  </Link>
+
+  <Link href="#" className="font-bold">
+    Company
+  </Link>
+
+  <Link href="#" className="font-bold">
+    Pricing
+  </Link>
+</div>
+
+      {/* <button className="flex items-center gap-2 rounded-full bg-black px-6 py-3 text-white font-medium">
         Request a demo
         <span>→</span>
-      </button>
+      </button> */}
+      <CheckoutButton />
     </nav>
   );
 };
