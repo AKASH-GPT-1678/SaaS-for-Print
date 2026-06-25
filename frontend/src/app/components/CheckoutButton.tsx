@@ -16,11 +16,10 @@ export default function CheckoutButton() {
 
 
   const generateQRCode = async () => {
-    const url = "https://web.whatsapp.com/";
+
 
     try {
       const response = await axios.get("http://localhost:8080/qr/generate", {
-        params: { url },
         responseType: "blob", // IMPORTANT for image
         headers: {
           Authorization: `Bearer ${token}`,
