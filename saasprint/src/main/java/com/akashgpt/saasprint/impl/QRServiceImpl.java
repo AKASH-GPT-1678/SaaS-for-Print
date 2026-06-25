@@ -50,7 +50,7 @@ public class QRServiceImpl implements QRService {
 
         BufferedImage qrCode = documentService.generateQRCode(url);
 
-        String qrCodeUrl = fileUploadService.uploadBufferedImage(qrCode, "qr" + uuid + "url");
+        String qrCodeUrl = fileUploadService.uploadFile(qrCode, "qr" + uuid + "url");
         user.setQrCodeUrl(qrCodeUrl);
         userRepo.save(user);
         return documentService.generateQRCode(url);

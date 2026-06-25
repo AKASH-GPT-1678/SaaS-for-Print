@@ -52,7 +52,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
         http
-                .securityMatcher("/auth/login", "/auth/register")  // ← only these routes
+                .securityMatcher("/auth/login", "/auth/register" , "/docs/upload")  // ← only these routes
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .anyRequest().permitAll()

@@ -1,20 +1,56 @@
-'use client'
+"use client";
 
-import { useParams } from 'next/navigation';
-import React from 'react';
+import { useEffect, useState } from "react";
+import { useAppSelector } from "@/lib/hooks";
+import {
+  connectSocket,
+  disconnectSocket,
+  FileNotification,
+} from "@/lib/socket";
 
 const ChatPage = () => {
+  const userId = useAppSelector((state) => state.data.userId);
 
-    const params = useParams();
-    const userId = params.userId;
+  const [files, setFiles] = useState<FileNotification[]>([]);
 
-    if (!userId) return <div>nothing</div>;
+  useEffect(() => {
+    if (!userId) return;
 
-    return (
-        <div>
-            <p>User ID: {userId}</p>
+    connectSocket(userId, (notification: FileNotification) => {
+      console.log("Incoming File:", notification);
+
+      setFiles((prev) => [notification, ...prev]);
+    });
+
+    return () => {
+      disconnectSocket();
+    };
+  }, [userId]);
+
+  return (
+    <div>
+      <p>User ID: {userId}</p>
+
+      <h2>Received Files</h2>
+
+      {files.map((file, index) => (
+        <div
+          key={index}
+          style={{
+            border: "1px solid gray",
+            padding: "10px",
+            marginBottom: "10px",
+          }}
+        >
+          <p>File: {file.fileName}</p>
+
+          <a href={file.fileUrl} target="_blank">
+            Download
+          </a>
         </div>
-    );
+      ))}
+    </div>
+  );
 };
 
 export default ChatPage;
