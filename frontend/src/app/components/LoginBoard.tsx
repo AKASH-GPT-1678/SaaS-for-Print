@@ -5,7 +5,7 @@ import React from "react";
 import SocialMedia from "@/lib/socials";
 import axios from "axios";
 import { useAppDispatch } from "@/lib/hooks";
-import { setToken } from "../redux/redux-setup";
+import { setToken, setUserId } from "../redux/redux-setup";
 import { useRouter } from "next/navigation";
 const LoginPage = () => {
   const [username, setUsername] = React.useState("");
@@ -23,6 +23,8 @@ const LoginPage = () => {
       console.log(response.data);
       if (response.data.token != null) {
         dispatch(setToken(response.data.token));
+        dispatch(setUserId(response.data.userid))
+        console.log(response.data.userid)
         router.push("/");
       }
     } catch (error: any) {

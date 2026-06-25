@@ -1,5 +1,7 @@
 package com.akashgpt.saasprint.model.response;
 
+import java.util.UUID;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,4 +13,5 @@ public class LoginData {
     private String token;
     private String remarks;
     private String email;
+    private UUID userid;
 }

@@ -5,6 +5,7 @@ import com.akashgpt.saasprint.model.request.LoginUserRequest;
 import com.akashgpt.saasprint.model.request.RegisterUserRequest;
 import com.akashgpt.saasprint.model.response.LoginData;
 import com.akashgpt.saasprint.model.response.RegisterUser;
+import com.akashgpt.saasprint.repository.UserRepo;
 import com.akashgpt.saasprint.service.JwtService;
 import com.akashgpt.saasprint.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,9 @@ public class UserController {
 
     @Autowired
     private JwtService jwtService;
+
+    @Autowired
+    private UserRepo userRepo;
 
     @Autowired
     AuthenticationManager authenticationManager;
@@ -58,9 +62,10 @@ public class UserController {
         if(authentication.isAuthenticated()){
             LoginData data = new LoginData();
             String token = jwtService.generateToken(user.getUsername());
+                User dbUser = userRepo.findByUsername(user.getUsername());
             System.out.println(token);
             data.setToken(token  );
-
+            data.setUserid((dbUser.getId()));
             data.setRemarks("User Logged in Successfully");
             return data;
 

@@ -7,11 +7,13 @@ import createWebStorage from "redux-persist/es/storage/createWebStorage";
 
 
 export type Data = {
-    token: string | null
+    token: string | null;
+    userId : string | null
 }
 
 const initialState: Data = {
     token: null,
+      userId : null
 
 }
 
@@ -47,13 +49,16 @@ const dataState = createSlice({
         setToken: (state, action: PayloadAction<string>) => {
             state.token = action.payload;
         },
+        setUserId : (state, action: PayloadAction<string>) => {
+            state.userId = action.payload
+        }
 
       
         
     }
 });
 
-export const { setToken } = dataState.actions;
+export const { setToken , setUserId } = dataState.actions;
 
 const rootReducer = combineReducers({
     data: dataState.reducer,
