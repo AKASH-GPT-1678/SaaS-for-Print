@@ -6,9 +6,6 @@ import com.akashgpt.saasprint.repository.UserRepo;
 import com.akashgpt.saasprint.service.DocumentService;
 import com.akashgpt.saasprint.service.FileUploadService;
 import com.akashgpt.saasprint.service.QRService;
-
-import software.amazon.awssdk.services.s3.S3Client;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,8 +40,8 @@ public class QRServiceImpl implements QRService {
         UUID uuid = user.getId();
 
         String url = mode.equals("development")
-                ? "http://localhost:3000/chat/" + uuid
-                : "https://saa-s-for-print.vercel.app/chat/" + uuid;
+                ? "http://localhost:3000/upload/" + uuid
+                : "https://saa-s-for-print.vercel.app/upload/" + uuid;
 
         user.setQrCodeUrl(url);
 

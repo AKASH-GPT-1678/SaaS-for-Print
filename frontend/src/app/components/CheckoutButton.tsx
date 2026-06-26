@@ -64,7 +64,7 @@ export default function CheckoutButton() {
             });
 
 
-            alert("Payment Successful!");
+            // alert("Payment Successful!");
             console.log(paymentResponse.data);
 
             await generateQRCode();

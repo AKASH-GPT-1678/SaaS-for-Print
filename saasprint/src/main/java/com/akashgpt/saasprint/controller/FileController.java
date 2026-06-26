@@ -4,7 +4,6 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,7 +24,7 @@ public class FileController {
     private FileUploadService fileUploadService;
 
     @PostMapping("/upload")
-    public ResponseEntity<?> uploadFile(
+    public ResponseEntity<FileNotification> uploadFile(
             @RequestParam MultipartFile file,
             @RequestParam UUID receiverId) {
 
@@ -41,6 +40,6 @@ public class FileController {
                 "/topic/user/" + receiverId,
                 notification);
 
-        return ResponseEntity.ok(fileUrl);
+        return ResponseEntity.ok(notification);
     }
 }

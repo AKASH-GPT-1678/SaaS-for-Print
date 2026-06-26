@@ -2,18 +2,13 @@ import Image from "next/image";
 import Logo from "../../../public/logo_bgg.png";
 import CheckoutButton from "../components/CheckoutButton";
 import Link from "next/link";
+import { Menu } from "lucide-react";
+
 const Header = () => {
-  const links = [
-    "Product",
-    "Use Cases",
-    "Customers",
-    "Blog",
-    "Company",
-    "Pricing",
-  ];
   return (
-    <nav className="flex items-center justify-between px-10 py-4 ">
-      <div className="flex gap-2">
+    <nav className="flex items-center justify-between px-6 md:px-10 py-4">
+      {/* Logo */}
+      <div className="flex items-center gap-2">
         <Image
           src={Logo.src}
           alt="brand-logo"
@@ -21,42 +16,51 @@ const Header = () => {
           height={30}
           className="bg-black"
         />
-        <p className="text-2xl font-bold">Printar</p>
+
+        <p className="text-xl md:text-2xl font-bold">
+          Printar
+        </p>
       </div>
 
-      <div className="flex flex-row gap-4"></div>
+      {/* Desktop Navigation */}
+      <div className="hidden lg:flex items-center gap-8">
+        <Link href="/dashboard" className="font-bold hover:text-gray-600">
+          Product
+        </Link>
 
-<div className="flex items-center gap-10">
-  <Link href="dashboard" className="font-bold">
-    Product
-  </Link>
+        <Link href="#" className="font-bold hover:text-gray-600">
+          Use Cases
+        </Link>
 
-  <Link href="#" className="font-bold">
-    Use Cases
-  </Link>
+        <Link href="#" className="font-bold hover:text-gray-600">
+          Customers
+        </Link>
 
-  <Link href="#" className="font-bold">
-    Customers
-  </Link>
+        <Link href="#" className="font-bold hover:text-gray-600">
+          Blog
+        </Link>
 
-  <Link href="#" className="font-bold">
-    Blog
-  </Link>
+        <Link href="#" className="font-bold hover:text-gray-600">
+          Company
+        </Link>
 
-  <Link href="#" className="font-bold">
-    Company
-  </Link>
+        <Link href="#" className="font-bold hover:text-gray-600">
+          Pricing
+        </Link>
+      </div>
 
-  <Link href="#" className="font-bold">
-    Pricing
-  </Link>
-</div>
+      {/* Right Side */}
+      <div className="flex items-center gap-4">
+        {/* Hide button on very small screens */}
+        <div className="hidden sm:block">
+          <CheckoutButton />
+        </div>
 
-      {/* <button className="flex items-center gap-2 rounded-full bg-black px-6 py-3 text-white font-medium">
-        Request a demo
-        <span>→</span>
-      </button> */}
-      <CheckoutButton />
+        {/* Mobile Menu Icon */}
+        <button className="lg:hidden">
+          <Menu size={30} />
+        </button>
+      </div>
     </nav>
   );
 };
