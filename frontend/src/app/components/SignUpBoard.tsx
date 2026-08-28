@@ -5,30 +5,39 @@ import { BiMessageDetail } from "react-icons/bi";
 import { FaLock } from "react-icons/fa";
 import CustomInput from "@/lib/Input";
 import SocialMedia from "@/lib/socials";
-import axios from "axios";
+import { api, getApiErrorMessage } from "@/lib/api";
 import { useRouter } from "next/navigation";
 const SignUpBoard = () => {
   const [username, setUsername] = React.useState("");
   const [email , setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [passwordType , setPasswordType] = React.useState(true);
+  const [error, setError] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
   const router = useRouter();
   const registerUser = async () => {
-    if (username && password) {
-        try {
-            const response = await axios.post('http://localhost:8080/auth/register', {
-              email,
-                username,
-                password
-            });
+    if (!username || !password || !email) {
+      setError("Please fill in all fields.");
+      return;
+    }
+    setError("");
+    setLoading(true);
+    try {
+      const response = await api.post("/auth/register", {
+        email,
+        username,
+        password,
+      });
 
-            console.log(response.data);
-            if(response.data.success){
-                router.push('/login');
-            }
-        } catch (error : any) {
-            console.error(error.response?.data || error.message);
-        }
+      if (response.data.success) {
+        router.push("/login");
+      } else {
+        setError(response.data.message || "Registration failed.");
+      }
+    } catch (err: unknown) {
+      setError(getApiErrorMessage(err, "Registration failed"));
+    } finally {
+      setLoading(false);
     }
   };
 return (
@@ -80,7 +89,7 @@ return (
               <div className="flex justify-between items-center">
                 <input
                   type={passwordType ? "password" : "text"}
-                  placeholder="Enter your password"
+                  placeholder="Enter your password (min 8 characters)"
                   className="outline-none w-full"
                   onChange={(e) => setPassword(e.target.value)}
                 />
@@ -104,14 +113,19 @@ return (
             </p>
           </div>
 
+          {error ? (
+            <p className="mt-4 text-sm text-red-600">{error}</p>
+          ) : null}
+
           {/* Buttons */}
           <div className="mt-8 flex flex-col md:flex-row gap-4">
             <Button
               variant="contained"
               className="p-2 bg-blue-500 w-full text-white"
               onClick={registerUser}
+              disabled={loading}
             >
-              Sign Up
+              {loading ? "Signing up..." : "Sign Up"}
             </Button>
 
             <Button

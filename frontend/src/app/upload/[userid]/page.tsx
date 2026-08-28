@@ -2,11 +2,14 @@
 
 import React, { useState } from "react";
 import { use } from "react";
+import { API_BASE_URL } from "@/lib/api";
 
 const Page = ({ params }: { params: Promise<{ userid: string }> }) => {
   const { userid } = use(params);
 
   const [files, setFiles] = useState<File[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [status, setStatus] = useState("");
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files;
@@ -21,31 +24,32 @@ const Page = ({ params }: { params: Promise<{ userid: string }> }) => {
     setFiles((prev) => prev.filter((_, i) => i !== index));
   };
   const sendFiles = async () => {
+    if (files.length === 0) return;
+    setStatus("");
+    setUploading(true);
     try {
-      const formData = new FormData();
-
-      files.forEach((file) => {
+      for (const file of files) {
+        const formData = new FormData();
         formData.append("file", file);
-      });
+        formData.append("receiverId", userid);
 
-      formData.append("receiverId", userid);
+        const response = await fetch(`${API_BASE_URL}/docs/upload`, {
+          method: "POST",
+          body: formData,
+        });
 
-      const response = await fetch("http://localhost:8080/docs/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to upload");
+        if (!response.ok) {
+          const payload = await response.json().catch(() => null);
+          throw new Error(payload?.message || "Failed to upload");
+        }
       }
 
-      const result = await response.json();
-
-      console.log("Upload Success", result);
-
       setFiles([]);
+      setStatus("Files sent successfully.");
     } catch (error) {
-      console.error(error);
+      setStatus(error instanceof Error ? error.message : "Failed to upload");
+    } finally {
+      setUploading(false);
     }
   };
     const inputRef = React.useRef<HTMLInputElement>(null);
@@ -142,11 +146,14 @@ const Page = ({ params }: { params: Promise<{ userid: string }> }) => {
           <button
             type="button"
             onClick={sendFiles}
-            disabled={files.length === 0}
+            disabled={files.length === 0 || uploading}
             className="mt-6 inline-flex w-full items-center justify-center rounded-md bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-slate-300"
           >
-            Send Files
+            {uploading ? "Sending..." : "Send Files"}
           </button>
+          {status ? (
+            <p className="mt-3 text-center text-sm text-slate-600">{status}</p>
+          ) : null}
         </div>
       </section>
     </main>

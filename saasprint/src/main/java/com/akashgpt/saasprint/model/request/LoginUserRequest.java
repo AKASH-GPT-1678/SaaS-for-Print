@@ -1,6 +1,6 @@
 package com.akashgpt.saasprint.model.request;
 
-
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoginUserRequest {
+    @NotBlank
     private String username;
+
+    @NotBlank
     private String password;
 }

@@ -3,7 +3,7 @@ import { FaRegUser, FaLock } from "react-icons/fa";
 import CustomInput from "@/lib/Input";
 import React from "react";
 import SocialMedia from "@/lib/socials";
-import axios from "axios";
+import { api, getApiErrorMessage } from "@/lib/api";
 import { useAppDispatch } from "@/lib/hooks";
 import { setToken, setUserId } from "../redux/redux-setup";
 import { useRouter } from "next/navigation";
@@ -11,24 +11,30 @@ const LoginPage = () => {
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [passwordType, setPasswordType] = React.useState(true);
+  const [error, setError] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
   const dispatch = useAppDispatch();
   const router = useRouter();
 
   const loginUser = async () => {
+    setError("");
+    setLoading(true);
     try {
-      const response = await axios.post("http://localhost:8080/auth/login", {
+      const response = await api.post("/auth/login", {
         username,
         password,
       });
-      console.log(response.data);
       if (response.data.token != null) {
         dispatch(setToken(response.data.token));
-        dispatch(setUserId(response.data.userid))
-        console.log(response.data.userid)
+        dispatch(setUserId(response.data.userid));
         router.push("/");
+      } else {
+        setError("Login failed. Please try again.");
       }
-    } catch (error: any) {
-      console.error(error.response?.data || error.message);
+    } catch (err: unknown) {
+      setError(getApiErrorMessage(err, "Invalid username or password"));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -91,12 +97,17 @@ const LoginPage = () => {
               </p>
             </div>
 
+            {error ? (
+              <p className="mt-4 text-sm text-red-600">{error}</p>
+            ) : null}
+
             {/* Button */}
             <button
-              className="bg-blue-500 mt-6 text-white w-full p-2 rounded-lg cursor-pointer hover:bg-blue-600"
+              className="bg-blue-500 mt-6 text-white w-full p-2 rounded-lg cursor-pointer hover:bg-blue-600 disabled:opacity-60"
               onClick={loginUser}
+              disabled={loading || !username || !password}
             >
-              Sign In
+              {loading ? "Signing in..." : "Sign In"}
             </button>
 
             <SocialMedia />

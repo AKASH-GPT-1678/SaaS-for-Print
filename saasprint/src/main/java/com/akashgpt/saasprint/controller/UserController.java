@@ -8,71 +8,54 @@ import com.akashgpt.saasprint.model.response.RegisterUser;
 import com.akashgpt.saasprint.repository.UserRepo;
 import com.akashgpt.saasprint.service.JwtService;
 import com.akashgpt.saasprint.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-
-@CrossOrigin(origins =  "http://localhost:3000")
 @RestController
 @RequestMapping("/auth")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+    private final JwtService jwtService;
+    private final UserRepo userRepo;
+    private final AuthenticationManager authenticationManager;
 
-    @Autowired
-    private JwtService jwtService;
-
-    @Autowired
-    private UserRepo userRepo;
-
-    @Autowired
-    AuthenticationManager authenticationManager;
-
-    @PostMapping("/register")
-    public RegisterUser register(@RequestBody RegisterUserRequest users){
-
-
-        User user = userService.saveUser(users);
-        RegisterUser user1 = new RegisterUser("User Registered Successfully" , true , user.getEmail() );
-        return user1;
-
+    public UserController(
+            UserService userService,
+            JwtService jwtService,
+            UserRepo userRepo,
+            AuthenticationManager authenticationManager
+    ) {
+        this.userService = userService;
+        this.jwtService = jwtService;
+        this.userRepo = userRepo;
+        this.authenticationManager = authenticationManager;
     }
 
-    @GetMapping("/oauth-success")
-    public String oauthSuccess(Authentication authentication) {
-
-        OAuth2User user = (OAuth2User) authentication.getPrincipal();
-
-        String email = user.getAttribute("email");
-
-        // 🔥 Generate JWT here
-        String token = "generate-your-jwt-here";
-
-        return token;
+    @PostMapping("/register")
+    public RegisterUser register(@Valid @RequestBody RegisterUserRequest users) {
+        User user = userService.saveUser(users);
+        return new RegisterUser("User Registered Successfully", true, user.getEmail());
     }
 
     @PostMapping("/login")
-    public LoginData login(@RequestBody LoginUserRequest user){
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
-        if(authentication.isAuthenticated()){
-            LoginData data = new LoginData();
-            String token = jwtService.generateToken(user.getUsername());
-                User dbUser = userRepo.findByUsername(user.getUsername());
-            System.out.println(token);
-            data.setToken(token  );
-            data.setUserid((dbUser.getId()));
-            data.setRemarks("User Logged in Successfully");
-            return data;
+    public LoginData login(@Valid @RequestBody LoginUserRequest user) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())
+        );
 
-        }
-        else
-            return null;
-
+        User dbUser = userRepo.findByUsername(authentication.getName());
+        LoginData data = new LoginData();
+        data.setToken(jwtService.generateToken(user.getUsername()));
+        data.setUserid(dbUser.getId());
+        data.setEmail(dbUser.getEmail());
+        data.setRemarks("User Logged in Successfully");
+        return data;
     }
-
 }

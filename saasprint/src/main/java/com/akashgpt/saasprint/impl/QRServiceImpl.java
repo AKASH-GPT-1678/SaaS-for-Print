@@ -1,56 +1,59 @@
 package com.akashgpt.saasprint.impl;
 
+import com.akashgpt.saasprint.exception.ResourceNotFoundException;
 import com.akashgpt.saasprint.model.db.User;
-import com.akashgpt.saasprint.model.response.QRTokensResponse;
 import com.akashgpt.saasprint.repository.UserRepo;
 import com.akashgpt.saasprint.service.DocumentService;
 import com.akashgpt.saasprint.service.FileUploadService;
 import com.akashgpt.saasprint.service.QRService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import java.util.UUID;
+
 import java.awt.image.BufferedImage;
-import org.springframework.beans.factory.annotation.Value;
+import java.util.UUID;
 
 @Service
 public class QRServiceImpl implements QRService {
 
-    @Autowired
-    private DocumentService documentService;
-    @Autowired
-    private UserRepo userRepo;
+    private final DocumentService documentService;
+    private final UserRepo userRepo;
+    private final FileUploadService fileUploadService;
+    private final String frontendBaseUrl;
 
-    @Autowired
-    private FileUploadService fileUploadService;
-
-    @Value("${spring.mode}")
-    private String mode;
+    public QRServiceImpl(
+            DocumentService documentService,
+            UserRepo userRepo,
+            FileUploadService fileUploadService,
+            @Value("${app.frontend-base-url:http://localhost:3000}") String frontendBaseUrl
+    ) {
+        this.documentService = documentService;
+        this.userRepo = userRepo;
+        this.fileUploadService = fileUploadService;
+        this.frontendBaseUrl = frontendBaseUrl;
+    }
 
     @Override
     public BufferedImage generateQR() throws Exception {
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new ResourceNotFoundException("User is not authenticated");
+        }
 
-        String name = authentication.getName();
-
-        User user = userRepo.findByUsername(name);
+        User user = userRepo.findByUsername(authentication.getName());
+        if (user == null) {
+            throw new ResourceNotFoundException("User not found");
+        }
 
         UUID uuid = user.getId();
+        String pageUrl = frontendBaseUrl.replaceAll("/$", "") + "/upload/" + uuid;
+        BufferedImage qrCode = documentService.generateQRCode(pageUrl);
+        String qrImageUrl = fileUploadService.uploadFile(qrCode, "qr/" + uuid + ".png");
 
-        String url = mode.equals("development")
-                ? "http://localhost:3000/upload/" + uuid
-                : "https://saa-s-for-print.vercel.app/upload/" + uuid;
-
-        user.setQrCodeUrl(url);
-
-        BufferedImage qrCode = documentService.generateQRCode(url);
-
-        String qrCodeUrl = fileUploadService.uploadFile(qrCode, "qr" + uuid + "url");
-        user.setQrCodeUrl(qrCodeUrl);
+        user.setQrCodeUrl(pageUrl);
+        user.setQrStorageUrl(qrImageUrl);
         userRepo.save(user);
-        return documentService.generateQRCode(url);
+        return qrCode;
     }
-
 }

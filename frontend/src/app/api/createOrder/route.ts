@@ -1,56 +1,52 @@
 import { NextResponse } from "next/server";
 import Razorpay from "razorpay";
 
-
-const RazorpayKey = process.env.RAZORPAY_KEY_ID as string;
-const RazorpaySecret = process.env.RAZORPAY_SECRET_KEY as string;
-
-if (!RazorpaySecret || !RazorpayKey) {
-    throw new Error("Razorpay keys are missing");
-}
-
-
-const razorpay = new Razorpay({
-    key_id: RazorpayKey,
-    key_secret: RazorpaySecret
-
-
-});
-
 export type OrderBody = {
-    amount: number;
-    currency: string;
+  amount: number;
+  currency: string;
+};
+
+const MIN_AMOUNT_PAISE = 100;
+const MAX_AMOUNT_PAISE = 10000000;
+
+function getRazorpay() {
+  const keyId = process.env.RAZORPAY_KEY_ID;
+  const keySecret = process.env.RAZORPAY_SECRET_KEY;
+  if (!keyId || !keySecret) {
+    return null;
+  }
+  return new Razorpay({
+    key_id: keyId,
+    key_secret: keySecret,
+  });
 }
 
 export async function POST(req: Request) {
-
-
-
-
-    try {
-        const { amount, currency }: OrderBody = await req.json();
-        if (!amount) {
-            return NextResponse.json({ message: `Amount is required` }, { status: 400 })
-        }
-
-        const options = {
-            amount,
-            currency: currency || "INR",
-            receipt: `receipt#${Date.now()}`,
-        }
-
-
-        const order = await razorpay.orders.create(options);
-        console.log("Order Created Successfully");
-        return NextResponse.json({ orderId: order.id }, { status: 200 })
-
-
-
-
-
-    } catch (error) {
-        return NextResponse.json({ message: "Server Error", error }, { status: 500 })
-
+  try {
+    const razorpay = getRazorpay();
+    if (!razorpay) {
+      return NextResponse.json(
+        { message: "Payments are not configured" },
+        { status: 503 }
+      );
     }
 
+    const { amount, currency }: OrderBody = await req.json();
+    if (!amount || typeof amount !== "number") {
+      return NextResponse.json({ message: "Amount is required" }, { status: 400 });
+    }
+    if (amount < MIN_AMOUNT_PAISE || amount > MAX_AMOUNT_PAISE) {
+      return NextResponse.json({ message: "Amount is out of range" }, { status: 400 });
+    }
+
+    const order = await razorpay.orders.create({
+      amount,
+      currency: currency || "INR",
+      receipt: `receipt#${Date.now()}`,
+    });
+
+    return NextResponse.json({ orderId: order.id }, { status: 200 });
+  } catch {
+    return NextResponse.json({ message: "Server Error" }, { status: 500 });
+  }
 }

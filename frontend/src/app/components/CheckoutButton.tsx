@@ -4,48 +4,24 @@ import { useState } from "react";
 import { createOrderId } from "@/lib/orderid";
 import axios from "axios";
 import Script from "next/script";
-
+import { useRouter } from "next/navigation";
 import { useAppSelector } from "@/lib/hooks";
-
 
 export default function CheckoutButton() {
   const [loading, setLoading] = useState(false);
-  const [price, setprice] = React.useState(10);
-
+  const [price] = React.useState(10);
+  const [error, setError] = useState("");
+  const router = useRouter();
   const token = useAppSelector((state) => state.data.token);
 
-
-  const generateQRCode = async () => {
-
-
-    try {
-      const response = await axios.get("http://localhost:8080/qr/generate", {
-        responseType: "blob", // IMPORTANT for image
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-
-      const imageUrl = URL.createObjectURL(response.data);
-   
-
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-
   const handlePayment = async () => {
-    // if (!isVerified) {
+    if (!token) {
+      router.push("/login");
+      return;
+    }
 
-
-    //     toast.error('Login for Premium Access');
-      
-    //   return;
-    // }
-
-
+    setError("");
+    setLoading(true);
     try {
       const orderId = await createOrderId(price, "INR");
 
@@ -53,64 +29,62 @@ export default function CheckoutButton() {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: price * 100,
         currency: "INR",
-        name: "Gupta Company",
+        name: "SaasPrint",
         order_id: orderId,
-        handler: async function (response: any) {
+        handler: async function (response: {
+          razorpay_payment_id: string;
+          razorpay_signature: string;
+        }) {
           try {
-            const paymentResponse = await axios.post("/api/verifyOrder", {
+            await axios.post("/api/verifyOrder", {
               razorpay_order_id: orderId,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
             });
-
-
-            // alert("Payment Successful!");
-            console.log(paymentResponse.data);
-
-            await generateQRCode();
-          } catch (error) {
-            alert("Payment verification failed. Please contact support.");
-            console.error(error);
+            router.push("/qr");
+          } catch (err) {
+            console.error(err);
+            setError("Payment verification failed. Please contact support.");
           }
-        },
-        prefill: {
-          name: "YOUR_NAME",
-          email: "acashgupta960@gmail.com",
         },
         theme: {
           color: "#3399cc",
         },
       };
 
-      const razorpay = new (window as any).Razorpay(options);
-      razorpay.on("payment.failed", function (response: any) {
-        alert("Payment failed");
-        console.error(response.error);
+      const razorpay = new (window as unknown as {
+        Razorpay: new (opts: unknown) => {
+          on: (event: string, cb: (response: { error: unknown }) => void) => void;
+          open: () => void;
+        };
+      }).Razorpay(options);
+      razorpay.on("payment.failed", function () {
+        setError("Payment failed");
       });
       razorpay.open();
-    } catch (error) {
-      console.error("Payment initiation failed", error);
+    } catch (err) {
+      console.error("Payment initiation failed", err);
+      setError("Could not start payment");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <>
       <button
-        className="bg-emerald-700 text-white font-semibold px-4 py-2 rounded-xl hover:bg-emerald-600 transition-all duration-300 hover:shadow-lg hover:scale-105 cursor-pointer"
+        className="bg-emerald-700 text-white font-semibold px-4 py-2 rounded-xl hover:bg-emerald-600 transition-all duration-300 hover:shadow-lg hover:scale-105 cursor-pointer disabled:opacity-60"
         onClick={handlePayment}
         disabled={loading}
       >
         {loading ? "Processing..." : "Generate QR"}
       </button>
+      {error ? <p className="mt-2 text-sm text-red-600">{error}</p> : null}
 
-      
       <Script
         id="razorpay-checkout-js"
         src="https://checkout.razorpay.com/v1/checkout.js"
       />
     </>
   );
-
 }
-
-

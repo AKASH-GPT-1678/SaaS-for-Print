@@ -1,0 +1,10 @@
+# pnpm 11 defaults to a 1-day cooling-off period for newly published packages.
+# This lockfile was generated the same day as several transitive releases, so
+# install fails until they age out. Set to 1440 later if you want that gate back.
+minimumReleaseAge: 0
+
+allowBuilds:
+  bufferutil: true
+  es5-ext: true
+  unrs-resolver: true
+  utf-8-validate: true
