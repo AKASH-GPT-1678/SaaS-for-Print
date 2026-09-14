@@ -1,12 +1,10 @@
-import React from "react";
-import { IoPlayForward } from "react-icons/io5";
 import { IoArrowForwardSharp } from "react-icons/io5";
 import KrishnaPandey from "../../../public/krishna.png";
 import Image from "next/image";
 const CustomerStory = () => {
   return (
-    <div className="bg-black w-full min-h-80 pt-20 pb-20">
-      <div className="px-20">
+    <section id="customers" className="w-full bg-black px-6 py-20 md:px-20 md:py-28">
+      <div>
         {/* White line */}
         <div className="w-full h-[1px] bg-white mb-6"></div>
 
@@ -17,13 +15,13 @@ const CustomerStory = () => {
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row items-center justify-center gap-16 mt-10">
-        <div className="h-64 w-60  bg-blue-500 rounded-2xl px-5">
+      <div className="mx-auto mt-10 flex max-w-6xl flex-col items-stretch justify-center gap-12 md:flex-row md:items-center">
+        <div className="rounded-3xl bg-blue-500 p-6 shadow-2xl shadow-blue-500/10 md:w-[360px]">
           <span className="font-extrabold text-4xl">“</span>
           <div>
             <p className="font-bold text-xl">
-              After adapting Printar my work got 70% efficient and time
-              consumption way lesser{" "}
+              After adopting Printar, our work became faster and the counter
+              feels much more organized.
             </p>
           </div>
           <div className="flex items-center gap-4 mt-2">
@@ -41,18 +39,18 @@ const CustomerStory = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col gap-5">
-<p className="text-white max-w-60 md:max-w-80 text-xl md:text-2xl font-bold">
-  Every print request is processed with speed, privacy, and simplicity—making
-  document printing effortless for customers and shop owners alike.
-</p>
-          <button className="flex items-center gap-3 bg-white px-6 py-3 rounded-full text-black font-semibold hover:scale-105 transition w-fit">
+        <div className="flex max-w-xl flex-col gap-5">
+          <p className="text-white max-w-60 md:max-w-80 text-xl md:text-2xl font-bold">
+            A better experience for the person sending the file—and the person
+            printing it.
+          </p>
+          <button type="button" className="flex items-center gap-3 bg-white px-6 py-3 rounded-full text-black font-semibold hover:scale-105 transition w-fit">
             See it in action
             <IoArrowForwardSharp size={20} />
           </button>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

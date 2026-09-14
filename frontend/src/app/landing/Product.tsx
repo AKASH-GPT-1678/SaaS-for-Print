@@ -1,11 +1,10 @@
-import React from "react";
 import Image from "next/image";
 import Square from "../../../public/square.png";
 import { IoArrowForwardSharp } from "react-icons/io5";
-import AI from "../../../public/ai.png"
+import AI from "../../../public/ai.png";
 const ProductPage = () => {
   return (
-    <div className="px-6 md:px-20">
+    <section id="product" className="px-6 py-20 md:px-20 md:py-28">
       <div className="bg-black w-full h-1 mt-10 mb-4 px-10"></div>
 
       <div className="flex flex-row items-center gap-2 mb-4">
@@ -15,11 +14,11 @@ const ProductPage = () => {
 
       <div className="mb-8">
         <p className=" text-2xl md:text-3xl font-bold mb-4">
-          AI engineered to transform customer service
+          Everything your counter team needs to move faster
         </p>
         <p className=" max-w-100">
-          No tradeoffs between customer experience,compliance and orperational
-          efficiency -- you get all three
+          Printar turns a scattered print request into a simple, trackable flow
+          your team can repeat every day.
         </p>
       </div>
 
@@ -27,15 +26,12 @@ const ProductPage = () => {
         {/* Section 1 */}
         <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-10 lg:gap-20 px-6">
           <div className="max-w-md text-center lg:text-left space-y-3">
-            <p className="text-3xl lg:text-4xl font-bold">SuperHuman</p>
-            <p className="text-3xl lg:text-4xl font-bold">
-              Performance at Scale
-            </p>
+            <p className="text-3xl font-bold lg:text-4xl">A faster front desk</p>
 
             <p className="text-gray-600">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam.
+              Replace long message threads and USB drives with a QR code that
+              lets customers send print-ready documents before they reach the
+              counter.
             </p>
           </div>
 
@@ -59,15 +55,12 @@ const ProductPage = () => {
           />
 
           <div className="max-w-md text-center lg:text-left space-y-3">
-            <p className="text-3xl lg:text-4xl font-bold">SuperHuman</p>
-            <p className="text-3xl lg:text-4xl font-bold">
-              Performance at Scale
-            </p>
+            <p className="text-3xl font-bold lg:text-4xl">Never miss a request</p>
 
             <p className="text-gray-600">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam.
+              Live notifications keep your team aware of new files as they
+              arrive, so customers spend less time asking whether their job
+              was received.
             </p>
           </div>
         </div>
@@ -75,15 +68,11 @@ const ProductPage = () => {
         {/* Section 3 */}
         <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-10 lg:gap-20 px-6">
           <div className="max-w-md text-center lg:text-left space-y-3">
-            <p className="text-3xl lg:text-4xl font-bold">SuperHuman</p>
-            <p className="text-3xl lg:text-4xl font-bold">
-              Performance at Scale
-            </p>
+            <p className="text-3xl font-bold lg:text-4xl">Built for everyday work</p>
 
             <p className="text-gray-600">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam.
+              Keep customer files together, find what you need quickly, and
+              give your shop a workflow that feels professional from day one.
             </p>
           </div>
 
@@ -96,12 +85,12 @@ const ProductPage = () => {
           />
         </div>
 
-        <button className="flex items-center gap-3 mb-4 bg-black px-8 py-4 rounded-full text-white font-semibold hover:scale-105 transition">
+        <button type="button" className="flex items-center gap-3 mb-4 bg-black px-8 py-4 rounded-full text-white font-semibold hover:scale-105 transition">
           See it in action
           <IoArrowForwardSharp size={20} />
         </button>
       </div>
-    </div>
+    </section>
   );
 };
 

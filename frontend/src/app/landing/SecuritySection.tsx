@@ -49,7 +49,7 @@ const securityCards = [
 
 export default function SecuritySection() {
   return (
-    <section className="bg-black py-24 text-white">
+    <section id="company" className="bg-black py-24 text-white">
       <div className="mx-auto max-w-7xl px-6">
         {/* Top Border */}
         <div className="mb-6 border-t border-zinc-700 pt-4">
@@ -60,7 +60,7 @@ export default function SecuritySection() {
 
         {/* Heading */}
         <h2 className="mb-16 text-4xl font-semibold tracking-tight md:text-6xl">
-          Secure & responsible AI by design
+          Trust is part of the workflow
         </h2>
 
         {/* Cards */}
@@ -77,16 +77,14 @@ export default function SecuritySection() {
                   <Icon size={24} />
                 </div>
 
-                <h3 className="mb-3 text-2xl font-medium">
-                  {card.title}
-                </h3>
+                <h3 className="mb-3 text-2xl font-medium">{card.title}</h3>
 
                 <p className="mb-4 text-sm leading-relaxed text-zinc-400">
                   {card.description}
                 </p>
 
                 {card.link && (
-                  <button className="text-sm font-medium text-white">
+                  <button type="button" className="text-sm font-medium text-white">
                     {card.link}
                   </button>
                 )}

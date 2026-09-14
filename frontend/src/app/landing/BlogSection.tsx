@@ -23,7 +23,7 @@ const posts = [
 
 export default function BlogSection() {
   return (
-    <section className="bg-[#f5f2ed] py-24">
+    <section id="insights" className="bg-[#f5f2ed] py-24">
       <div className="mx-auto max-w-7xl px-6">
         {/* Top Border */}
         <div className="border-t border-zinc-400 pt-4">
@@ -34,7 +34,7 @@ export default function BlogSection() {
 
         {/* Heading */}
         <h2 className="mt-6 mb-14 text-5xl font-semibold tracking-tight text-black">
-          Our latest insights
+          Helpful ideas for better print shops
         </h2>
 
         {/* Featured Card */}
@@ -49,13 +49,13 @@ export default function BlogSection() {
               </div>
 
               <h3 className="mb-4 text-4xl font-medium leading-tight">
-                Introducing outbound conversations
+                The modern print shop starts with a better intake
               </h3>
 
               <p className="max-w-xl text-zinc-600">
-                Now, your AI agent can initiate contact via text,
-                email, or voice to handle the operational work
-                that never seems to stop.
+                Learn how a simple digital upload flow can reduce queues,
+                eliminate missing files, and give your team more time to focus
+                on great service.
               </p>
 
               <div className="mt-16 border-t border-zinc-200 pt-6 flex gap-4 text-sm">
@@ -73,9 +73,9 @@ export default function BlogSection() {
               <div className="h-full min-h-[320px] rounded-2xl bg-black relative overflow-hidden">
                 <div className="absolute inset-0 opacity-30">
                   <div className="grid grid-cols-6 gap-6 p-10">
-                    {Array.from({ length: 30 }).map((_, i) => (
+                    {Array.from({ length: 30 }, (_, i) => `grid-cell-${i}`).map((cell) => (
                       <div
-                        key={i}
+                        key={cell}
                         className="h-10 rounded-md border border-zinc-700"
                       />
                     ))}
@@ -111,7 +111,7 @@ export default function BlogSection() {
 
         {/* Button */}
         <div className="mt-10 flex justify-center">
-          <button className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-medium shadow-sm transition hover:shadow-md">
+          <button type="button" className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-medium shadow-sm transition hover:shadow-md">
             View all posts
             <ArrowRight size={16} />
           </button>

@@ -1,11 +1,9 @@
-import React from "react";
-
 const TrustedCompanies = () => {
   return (
-    <div className="bg-black w-full min-h-80 py-16 md:py-20">
-      <div className="px-6 md:px-20">
+    <section id="use-cases" className="w-full bg-black px-6 py-16 md:px-20 md:py-20">
+      <div>
         {/* White line */}
-        <div className="w-full h-[1px] bg-white mb-6"></div>
+        <div className="w-full h-px bg-white mb-6"></div>
 
         {/* Heading */}
         <div className="flex items-center gap-3">
@@ -17,7 +15,7 @@ const TrustedCompanies = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6 md:gap-10 px-6 md:px-20 lg:px-40 py-12">
+      <div className="mx-auto grid max-w-6xl grid-cols-2 gap-3 py-10 sm:grid-cols-3 lg:grid-cols-5">
         {[
           "Government Offices",
           "Schools",
@@ -34,13 +32,11 @@ const TrustedCompanies = () => {
           "Hotels",
           "Coworking Spaces",
           "Small Businesses",
-        ].map((company, index) => (
+        ].map((company) => (
           <div
-            key={index}
+            key={company}
             className="
-              w-full
-              max-w-[180px]
-              h-20
+              h-20 w-full
               mx-auto
               border
               border-white/20
@@ -59,7 +55,7 @@ const TrustedCompanies = () => {
           </div>
         ))}
       </div>
-    </div>
+    </section>
   );
 };
 

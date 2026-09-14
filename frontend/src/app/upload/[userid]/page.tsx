@@ -52,11 +52,10 @@ const Page = ({ params }: { params: Promise<{ userid: string }> }) => {
       setUploading(false);
     }
   };
-    const inputRef = React.useRef<HTMLInputElement>(null);
-  
+  const inputRef = React.useRef<HTMLInputElement>(null);
 
   return (
-        <main className="min-h-screen bg-slate-50 px-4 py-6 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-slate-50 px-4 py-6 sm:px-6 lg:px-8">
       <section className="mx-auto flex min-h-[calc(100vh-3rem)] w-full max-w-3xl items-center">
         <div className="w-full rounded-lg border border-slate-200 bg-white p-5 shadow-sm sm:p-8">
           <div className="mb-6">
@@ -64,7 +63,8 @@ const Page = ({ params }: { params: Promise<{ userid: string }> }) => {
               Upload Room
             </h1>
             <p className="mt-2 text-sm text-slate-600 sm:text-base">
-              User ID: <span className="font-semibold text-slate-900">{userid}</span>
+              User ID:{" "}
+              <span className="font-semibold text-slate-900">{userid}</span>
             </p>
           </div>
 
@@ -88,7 +88,8 @@ const Page = ({ params }: { params: Promise<{ userid: string }> }) => {
               Upload your documents
             </p>
             <p className="mt-1 text-sm text-slate-500">
-              Select PDFs, Word files, spreadsheets, slides, text files, or CSVs.
+              Select PDFs, Word files, spreadsheets, slides, text files, or
+              CSVs.
             </p>
 
             <button
@@ -157,11 +158,9 @@ const Page = ({ params }: { params: Promise<{ userid: string }> }) => {
         </div>
       </section>
     </main>
-
   );
 };
 
 export default Page;
 
 // simple inline styles
-

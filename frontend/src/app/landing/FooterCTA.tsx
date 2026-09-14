@@ -1,9 +1,5 @@
-import {
-  ArrowRight,
-
-  Bookmark,
-} from "lucide-react";
-import { FaLinkedin , FaTwitter , FaYoutube } from "react-icons/fa6";
+import { ArrowRight, Bookmark } from "lucide-react";
+import { FaLinkedin, FaTwitter, FaYoutube } from "react-icons/fa6";
 
 export default function FooterCTA() {
   return (
@@ -25,12 +21,12 @@ export default function FooterCTA() {
               </p>
 
               <h2 className="text-4xl font-semibold leading-tight md:text-6xl">
-                The only AI support agent
+                Make every print request
                 <br />
-                built for financial services
+                easier to manage
               </h2>
 
-              <button className="mt-10 inline-flex items-center gap-2 rounded-full bg-black px-7 py-4 text-sm font-medium text-white transition hover:scale-105">
+              <button type="button" className="mt-10 inline-flex items-center gap-2 rounded-full bg-black px-7 py-4 text-sm font-medium text-white transition hover:scale-105">
                 Request a demo
                 <ArrowRight size={16} />
               </button>
@@ -39,9 +35,7 @@ export default function FooterCTA() {
             {/* Illustration Placeholder */}
             <div className="flex justify-center lg:justify-end">
               <div className="flex h-[300px] w-[300px] items-center justify-center rounded-3xl border-2 border-dashed border-black/30">
-                <span className="text-black/50">
-                  Illustration Placeholder
-                </span>
+                <span className="text-black/50">Illustration Placeholder</span>
               </div>
             </div>
           </div>
@@ -56,62 +50,49 @@ export default function FooterCTA() {
             <div>
               <div className="flex items-center gap-3">
                 <div className="h-7 w-7 border border-white" />
-                <span className="text-xl font-medium">
-                  Gradient Labs
-                </span>
+                <span className="text-xl font-medium">Printar</span>
               </div>
             </div>
 
             {/* Product */}
             <div>
-              <h4 className="mb-6 text-sm text-zinc-400">
-                Product
-              </h4>
+              <h4 className="mb-6 text-sm text-zinc-400">Product</h4>
 
               <ul className="space-y-4 text-sm">
                 <li>Overview</li>
-                <li>Voice</li>
+                <li>QR uploads</li>
+                <li>Live notifications</li>
+                <li>File management</li>
                 <li>Pricing</li>
-                <li>Request a demo</li>
-                <li>Status</li>
               </ul>
             </div>
 
             {/* Stories */}
             <div>
-              <h4 className="mb-6 text-sm text-zinc-400">
-                Customer stories
-              </h4>
+              <h4 className="mb-6 text-sm text-zinc-400">Customer stories</h4>
 
               <ul className="space-y-4 text-sm">
-                <li>Digital banking case study</li>
-                <li>Zego</li>
-                <li>Plum</li>
-                <li>Sling Money</li>
-                <li>View all</li>
+                <li>Print shop workflows</li>
+                <li>Customer experience</li>
+                <li>Getting started</li>
               </ul>
 
-              <h4 className="mt-12 mb-6 text-sm text-zinc-400">
-                Resources
-              </h4>
+              <h4 className="mt-12 mb-6 text-sm text-zinc-400">Resources</h4>
 
               <ul className="space-y-4 text-sm">
                 <li>Blog</li>
-                <li>Customer support guide</li>
-                <li>Trust centre</li>
+                <li>Help centre</li>
+                <li>Privacy</li>
               </ul>
             </div>
 
             {/* Company */}
             <div>
-              <h4 className="mb-6 text-sm text-zinc-400">
-                Company
-              </h4>
+              <h4 className="mb-6 text-sm text-zinc-400">Company</h4>
 
               <ul className="space-y-4 text-sm">
-                <li>About</li>
-                <li>Careers</li>
-                <li>Events</li>
+                <li>About Printar</li>
+                <li>Contact</li>
                 <li>Terms</li>
                 <li>Privacy</li>
               </ul>
@@ -121,8 +102,7 @@ export default function FooterCTA() {
               </h4>
 
               <ul className="space-y-4 text-sm">
-                <li>media@company.com</li>
-                <li>Media kit</li>
+                <li>hello@printar.in</li>
               </ul>
             </div>
           </div>
@@ -137,9 +117,7 @@ export default function FooterCTA() {
                 <FaYoutube size={18} />
               </div>
 
-              <p className="text-sm text-zinc-500">
-                © 2026 Gradient Labs AI
-              </p>
+              <p className="text-sm text-zinc-500">© 2026 Printar. Built for busy print shops.</p>
             </div>
           </div>
         </div>
