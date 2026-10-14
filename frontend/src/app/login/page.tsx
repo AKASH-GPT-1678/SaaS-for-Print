@@ -1,12 +1,21 @@
-import React from 'react';
-import LoginBoard from '../components/LoginBoard';
+import type { Metadata } from "next";
+import { AuthShell } from "@/components/auth/AuthShell";
+import { LoginForm } from "@/components/auth/LoginForm";
 
-const LoginPage = () => {
-  return (
-  <div>
-    <LoginBoard/>
-  </div>
-  )
+export const metadata: Metadata = {
+	title: "Sign in | Printar",
+	description: "Sign in to your Printar workspace.",
+};
+
+export default async function LoginPage({
+	searchParams,
+}: {
+	searchParams: Promise<{ registered?: string }>;
+}) {
+	const { registered } = await searchParams;
+	return (
+		<AuthShell>
+			<LoginForm registered={registered === "1"} />
+		</AuthShell>
+	);
 }
-
-export default LoginPage

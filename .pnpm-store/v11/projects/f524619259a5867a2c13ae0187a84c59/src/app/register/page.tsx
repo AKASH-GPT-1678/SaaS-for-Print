@@ -1,14 +1,17 @@
-"use client"
-import React from 'react'
-import SignUpBoard from '../components/SignUpBoard';
-const RegisterPage = () => {
+import type { Metadata } from "next";
+import { AuthShell } from "@/components/auth/AuthShell";
+import { RegisterForm } from "@/components/auth/RegisterForm";
 
-  return (
-    <>
-    <SignUpBoard/>
-    
-    </>
-  )
+export const metadata: Metadata = {
+	title: "Create account | Printar",
+	description:
+		"Create your Printar account and simplify your printing workflow.",
+};
+
+export default function RegisterPage() {
+	return (
+		<AuthShell>
+			<RegisterForm />
+		</AuthShell>
+	);
 }
-
-export default RegisterPage;

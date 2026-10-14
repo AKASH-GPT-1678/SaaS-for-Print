@@ -20,7 +20,7 @@ pnpm test                 # All 10 Vitest unit/component tests, once
 pnpm test:watch           # Vitest watch mode
 pnpm test:unit            # Utility tests only
 pnpm test:components      # React component tests only
-pnpm test:e2e             # The single Playwright browser test
+pnpm test:e2e             # Auth flows, responsive layouts, and upload smoke test
 pnpm test:e2e:ui          # Playwright's interactive test runner
 pnpm test:e2e:report      # Open the latest HTML report
 pnpm test:all             # Vitest, then Playwright
@@ -36,9 +36,12 @@ pnpm exec playwright install chromium
 
 Playwright starts and stops a Next.js dev server on `http://127.0.0.1:3100`.
 Its generated files go in `dist/e2e`, controlled by `PRINTAR_E2E=1`.
-This allows your normal dev server to keep running. The current smoke test
-selects and removes a file without submitting it, so Java, AWS, and real user
-accounts are not required. It does not test backend delivery or physical printing.
+This allows your normal dev server to keep running. The upload smoke test
+selects and removes a file without submitting it. Auth tests mock the login and
+registration HTTP responses and check validation, errors, keyboard submission,
+and navigation. Layout checks save desktop and mobile screenshots in
+`test-results/`. Java, AWS, and real user accounts are not required. These tests
+do not verify backend authentication, document delivery, or physical printing.
 
 To test an already-running frontend instead, set `PLAYWRIGHT_BASE_URL` before
 running Playwright. For example, in PowerShell:

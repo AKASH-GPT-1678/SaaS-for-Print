@@ -1,5 +1,4 @@
-import Image from "next/image";
-import Logo from "../../../public/logo_bgg.png";
+import { PrintarLogo } from "@/components/brand/PrintarLogo";
 import CheckoutButton from "../components/CheckoutButton";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
@@ -10,17 +9,7 @@ const Header = () => {
   return (
     <nav className="flex items-center justify-between px-6 md:px-10 py-4">
       {/* Logo */}
-      <div className="flex items-center gap-2">
-        <Image
-          src={Logo.src}
-          alt="brand-logo"
-          width={30}
-          height={30}
-          className="bg-black"
-        />
-
-        <p className="text-xl md:text-2xl font-bold">Printar</p>
-      </div>
+      <PrintarLogo />
 
       {/* Desktop Navigation */}
       <div className="hidden lg:flex items-center gap-8">
