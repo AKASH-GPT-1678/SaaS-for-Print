@@ -128,3 +128,9 @@
     @apply font-sans;
   }
 }
+
+@theme {
+  --color-printar-deep: #122e35;
+  --color-printar-lite: #C8E8BD;
+  --color-pale-green-white:#D9EADD;
+}
