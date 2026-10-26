@@ -5,14 +5,14 @@ import { createOrderId } from "@/lib/orderid";
 import axios from "axios";
 import Script from "next/script";
 import { useRouter } from "next/navigation";
-import { useAppSelector } from "@/lib/hooks";
+import { useAuthStore } from "@/stores/auth-store";
 
 export default function CheckoutButton() {
   const [loading, setLoading] = useState(false);
   const [price] = React.useState(10);
   const [error, setError] = useState("");
   const router = useRouter();
-  const token = useAppSelector((state) => state.data.token);
+  const token = useAuthStore((state) => state.token);
 
   const handlePayment = async () => {
     if (!token) {

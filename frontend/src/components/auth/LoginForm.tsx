@@ -4,10 +4,9 @@ import { ArrowRight, LockKeyhole, UserRound } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useRef, useState } from "react";
-import { setToken, setUserId } from "@/app/redux/redux-setup";
 import { Button } from "@/components/ui/button";
 import { api, getApiErrorMessage } from "@/lib/api";
-import { useAppDispatch } from "@/lib/hooks";
+import { useAuthStore } from "@/stores/auth-store";
 import { AuthFeedback } from "./AuthFeedback";
 import { AuthField } from "./AuthField";
 
@@ -21,7 +20,7 @@ export function LoginForm({ registered = false }: { registered?: boolean }) {
 	const [error, setError] = useState("");
 	const [loading, setLoading] = useState(false);
 	const submitting = useRef(false);
-	const dispatch = useAppDispatch();
+	const login = useAuthStore((state) => state.login);
 	const router = useRouter();
 
 	async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -58,8 +57,7 @@ export function LoginForm({ registered = false }: { registered?: boolean }) {
 				setError("We couldn't sign you in. Please try again.");
 				return;
 			}
-			dispatch(setToken(data.token));
-			dispatch(setUserId(data.userid));
+			login(data.token, data.userid);
 			router.replace("/dashboard");
 		} catch (err: unknown) {
 			setError(

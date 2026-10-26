@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Download, FileText, Inbox, Printer } from "lucide-react";
 
-import { useAppSelector } from "@/lib/hooks";
+import { useAuthStore } from "@/stores/auth-store";
 import {
   connectSocket,
   disconnectSocket,
@@ -12,7 +12,7 @@ import {
 import { printDocument } from "@/lib/printDocument";
 
 const ChatPage = () => {
-  const userId = useAppSelector((state) => state.data.userId);
+  const userId = useAuthStore((state) => state.userId);
 
   const [files, setFiles] = useState<FileNotification[]>([]);
 

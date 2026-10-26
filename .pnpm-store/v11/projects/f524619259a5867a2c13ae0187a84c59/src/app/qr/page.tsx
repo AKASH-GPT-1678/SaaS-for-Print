@@ -3,10 +3,11 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { api, getApiErrorMessage } from "@/lib/api";
-import { useAppSelector } from "@/lib/hooks";
+import { useAuthStore } from "@/stores/auth-store";
 
 const QRCodePage = () => {
-  const token = useAppSelector((state) => state.data.token);
+  const token = useAuthStore((state) => state.token);
+  const isHydrated = useAuthStore((state) => state.isHydrated);
   const router = useRouter();
   const [qrCodeUrl, setQrCodeUrl] = React.useState("");
   const [error, setError] = React.useState("");
@@ -34,6 +35,7 @@ const QRCodePage = () => {
   }, []);
 
   React.useEffect(() => {
+    if (!isHydrated) return;
     if (!token) {
       router.push("/login");
       return;
@@ -44,7 +46,7 @@ const QRCodePage = () => {
         URL.revokeObjectURL(objectUrlRef.current);
       }
     };
-  }, [token, router, generateQr]);
+  }, [token, isHydrated, router, generateQr]);
 
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-10">
@@ -70,7 +72,7 @@ const QRCodePage = () => {
         <button
           type="button"
           onClick={() => void generateQr()}
-          disabled={loading || !token}
+          disabled={loading || !token || !isHydrated}
           className="mt-6 w-full rounded-md bg-slate-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-60"
         >
           {loading ? "Generating..." : "Regenerate QR"}
