@@ -40,13 +40,12 @@ const QRCodePage = () => {
       router.push("/login");
       return;
     }
-    void generateQr();
     return () => {
       if (objectUrlRef.current) {
         URL.revokeObjectURL(objectUrlRef.current);
       }
     };
-  }, [token, isHydrated, router, generateQr]);
+  }, [token, isHydrated, router]);
 
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-10">
