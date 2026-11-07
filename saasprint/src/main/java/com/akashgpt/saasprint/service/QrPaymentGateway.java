@@ -19,6 +19,8 @@ public class QrPaymentGateway {
 
     public QrPaymentGateway(@Value("${app.frontend-base-url:http://localhost:3000}") String frontend) {
         var factory = new JdkClientHttpRequestFactory(java.net.http.HttpClient.newBuilder()
+                // Next.js's HTTP dev server closes cleartext HTTP/2 (h2c) upgrade requests.
+                .version(java.net.http.HttpClient.Version.HTTP_1_1)
                 .connectTimeout(Duration.ofSeconds(10)).build());
         factory.setReadTimeout(Duration.ofSeconds(25));
         client = RestClient.builder().baseUrl(frontend.replaceAll("/$", ""))

@@ -55,4 +55,16 @@ class UserServiceTest {
 
         assertThrows(IllegalArgumentException.class, () -> userService.saveUser(request));
     }
+
+    @Test
+    void saveUserNormalizesEmailBeforeCheckingAndSaving() {
+        RegisterUserRequest request = new RegisterUserRequest("  Shop@Example.COM  ", "shopowner", "password1");
+        when(passwordEncoder.encode("password1")).thenReturn("hashed-password");
+        when(userRepo.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        User saved = userService.saveUser(request);
+
+        verify(userRepo).existsByEmail("shop@example.com");
+        assertEquals("shop@example.com", saved.getEmail());
+    }
 }

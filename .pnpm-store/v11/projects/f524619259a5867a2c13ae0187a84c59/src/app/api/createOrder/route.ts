@@ -24,7 +24,10 @@ function getRazorpay() {
 export async function GET() {
   const keyId = process.env.RAZORPAY_KEY_ID;
   if (!keyId || !process.env.RAZORPAY_SECRET_KEY) {
-    return NextResponse.json({ message: "Payments are not configured" }, { status: 503 });
+    return NextResponse.json(
+      { message: "Payments are not configured" },
+      { status: 503 },
+    );
   }
   return NextResponse.json({ keyId });
 }
@@ -35,16 +38,26 @@ export async function POST(req: Request) {
     if (!razorpay) {
       return NextResponse.json(
         { message: "Payments are not configured" },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
     const { amount, currency }: OrderBody = await req.json();
-    if (!amount || typeof amount !== "number" || !Number.isSafeInteger(amount)) {
-      return NextResponse.json({ message: "Amount is required" }, { status: 400 });
+    if (
+      !amount ||
+      typeof amount !== "number" ||
+      !Number.isSafeInteger(amount)
+    ) {
+      return NextResponse.json(
+        { message: "Amount is required" },
+        { status: 400 },
+      );
     }
     if (amount < MIN_AMOUNT_PAISE || amount > MAX_AMOUNT_PAISE) {
-      return NextResponse.json({ message: "Amount is out of range" }, { status: 400 });
+      return NextResponse.json(
+        { message: "Amount is out of range" },
+        { status: 400 },
+      );
     }
 
     const order = await razorpay.orders.create({
@@ -53,7 +66,10 @@ export async function POST(req: Request) {
       receipt: `receipt#${Date.now()}`,
     });
 
-    return NextResponse.json({ orderId: order.id, amount: order.amount, currency: order.currency }, { status: 200 });
+    return NextResponse.json(
+      { orderId: order.id, amount: order.amount, currency: order.currency },
+      { status: 200 },
+    );
   } catch {
     return NextResponse.json({ message: "Server Error" }, { status: 500 });
   }
