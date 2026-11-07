@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useAuthStore } from "@/stores/auth-store";
 import { cx } from "./landingStyles";
 
 const navigation = [
@@ -10,6 +13,10 @@ const navigation = [
 ] as const;
 
 export function LandingHeader() {
+  const token = useAuthStore((state) => state.token);
+  const isHydrated = useAuthStore((state) => state.isHydrated);
+  const isLoggedIn = isHydrated && Boolean(token);
+
   return (
     <>
       <div className={cx("announcement")}>
@@ -35,12 +42,15 @@ export function LandingHeader() {
             ))}
           </nav>
           <div className={cx("nav-actions")}>
-            <Link className={cx("sign-in")} href="/login">
-              Sign in
-            </Link>
-            <Link className={cx("button button-dark button-small")} href="/register">
-              Explore Printar <span aria-hidden="true">↗</span>
-            </Link>
+            {isLoggedIn ? (
+              <Link className={cx("button button-dark button-small")} href="/dashboard">
+                Dashboard <span aria-hidden="true">↗</span>
+              </Link>
+            ) : (
+              <Link className={cx("button button-dark button-small")} href="/login">
+                Sign in <span aria-hidden="true">↗</span>
+              </Link>
+            )}
           </div>
           <details className={cx("mobile-nav")}>
             <summary aria-label="Open navigation">
@@ -54,8 +64,11 @@ export function LandingHeader() {
                   {label}
                 </a>
               ))}
-              <Link href="/login">Sign in</Link>
-              <Link href="/register">Explore Printar ↗</Link>
+              {isLoggedIn ? (
+                <Link href="/dashboard">Dashboard ↗</Link>
+              ) : (
+                <Link href="/login">Sign in ↗</Link>
+              )}
             </nav>
           </details>
         </div>
