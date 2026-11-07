@@ -3,7 +3,8 @@
 	"vcs": {
 		"enabled": true,
 		"clientKind": "git",
-		"useIgnoreFile": true
+		"useIgnoreFile": true,
+		"root": "../"
 	},
 	"files": {
 		"ignoreUnknown": false
@@ -23,6 +24,25 @@
 			"quoteStyle": "double"
 		}
 	},
+	"css": {
+		"parser": {
+			"tailwindDirectives": true
+		}
+	},
+	"overrides": [
+		{
+			"includes": [
+				"src/components/landing/landing.module.css",
+				"src/components/qr/qr-manager.module.css"
+			],
+			"linter": {
+				"rules": {
+					"style": { "noDescendingSpecificity": "off" },
+					"complexity": { "noImportantStyles": "off" }
+				}
+			}
+		}
+	],
 	"assist": {
 		"enabled": true,
 		"actions": {

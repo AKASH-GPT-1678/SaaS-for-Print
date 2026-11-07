@@ -9,6 +9,7 @@
 		"lint": "biome lint .",
 		"format": "biome format --write .",
 		"check": "biome check .",
+		"check:staged": "biome check --staged --no-errors-on-unmatched",
 		"check:all": "biome check . && tsc --noEmit",
 		"test": "vitest run",
 		"test:watch": "vitest",

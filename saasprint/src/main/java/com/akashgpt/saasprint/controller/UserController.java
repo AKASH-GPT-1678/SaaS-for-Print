@@ -11,11 +11,13 @@ import com.akashgpt.saasprint.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import java.util.Locale;
 
 @RestController
 @RequestMapping("/auth")
@@ -46,13 +48,16 @@ public class UserController {
 
     @PostMapping("/login")
     public LoginData login(@Valid @RequestBody LoginUserRequest user) {
+        User dbUser = userRepo.findByEmail(user.getEmail().trim().toLowerCase(Locale.ROOT));
+        if (dbUser == null) {
+            throw new BadCredentialsException("Invalid email or password");
+        }
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())
+                new UsernamePasswordAuthenticationToken(dbUser.getUsername(), user.getPassword())
         );
 
-        User dbUser = userRepo.findByUsername(authentication.getName());
         LoginData data = new LoginData();
-        data.setToken(jwtService.generateToken(user.getUsername()));
+        data.setToken(jwtService.generateToken(authentication.getName()));
         data.setUserid(dbUser.getId());
         data.setEmail(dbUser.getEmail());
         data.setRemarks("User Logged in Successfully");

@@ -116,7 +116,7 @@ export function RegisterForm() {
 					value={values.username}
 					disabled={loading}
 					error={errors.username}
-					hint="You'll use this to sign in. Choose 3–50 characters."
+					hint="Choose 3–50 characters. You'll use your email to sign in."
 					onChange={(event) => updateField("username", event.target.value)}
 				/>
 				<AuthField

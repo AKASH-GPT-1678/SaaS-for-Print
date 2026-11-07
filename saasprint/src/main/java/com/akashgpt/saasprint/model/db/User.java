@@ -1,8 +1,13 @@
 package com.akashgpt.saasprint.model.db;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -28,6 +33,10 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    private String qrCodeUrl;
-    private String qrStorageUrl;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<QRCode> qrCodes = new ArrayList<>();
+
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, LockKeyhole, UserRound } from "lucide-react";
+import { ArrowRight, LockKeyhole, Mail } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useRef, useState } from "react";
@@ -11,10 +11,10 @@ import { AuthFeedback } from "./AuthFeedback";
 import { AuthField } from "./AuthField";
 
 export function LoginForm({ registered = false }: { registered?: boolean }) {
-	const [username, setUsername] = useState("");
+	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [errors, setErrors] = useState<{
-		username?: string;
+		email?: string;
 		password?: string;
 	}>({});
 	const [error, setError] = useState("");
@@ -26,14 +26,20 @@ export function LoginForm({ registered = false }: { registered?: boolean }) {
 	async function handleSubmit(event: FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 		if (submitting.current) return;
+		const emailInput = event.currentTarget.elements.namedItem(
+			"email",
+		) as HTMLInputElement;
 		const nextErrors = {
-			username: username.trim() ? undefined : "Enter your username.",
+			email:
+				email.trim() && emailInput.validity.valid
+					? undefined
+					: "Enter a valid email address.",
 			password: password.trim() ? undefined : "Enter your password.",
 		};
 		setErrors(nextErrors);
 		setError("");
-		const firstInvalid = nextErrors.username
-			? "login-username"
+		const firstInvalid = nextErrors.email
+			? "login-email"
 			: nextErrors.password
 				? "login-password"
 				: null;
@@ -45,7 +51,7 @@ export function LoginForm({ registered = false }: { registered?: boolean }) {
 		setLoading(true);
 		try {
 			const { data } = await api.post("/auth/login", {
-				username: username.trim(),
+				email: email.trim().toLowerCase(),
 				password,
 			});
 			if (
@@ -90,25 +96,26 @@ export function LoginForm({ registered = false }: { registered?: boolean }) {
 				{registered && (
 					<AuthFeedback
 						kind="success"
-						message="Your account is ready. Sign in with your new username and password."
+						message="Your account is ready. Sign in with your email and password."
 					/>
 				)}
 				<AuthField
-					id="login-username"
-					name="username"
-					label="Username"
-					placeholder="Your username"
-					icon={UserRound}
-					autoComplete="username"
+					id="login-email"
+					name="email"
+					label="Email address"
+					placeholder="Your email address"
+					icon={Mail}
+					type="email"
+					autoComplete="email"
 					autoCapitalize="none"
 					spellCheck={false}
 					required
-					value={username}
+					value={email}
 					disabled={loading}
-					error={errors.username}
+					error={errors.email}
 					onChange={(event) => {
-						setUsername(event.target.value);
-						setErrors((previous) => ({ ...previous, username: undefined }));
+						setEmail(event.target.value);
+						setErrors((previous) => ({ ...previous, email: undefined }));
 						setError("");
 					}}
 				/>

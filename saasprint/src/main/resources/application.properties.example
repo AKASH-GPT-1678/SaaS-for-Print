@@ -23,6 +23,10 @@ spring.servlet.multipart.max-request-size=20MB
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=false
 
+# QR checkout delegates to the Next.js server at app.frontend-base-url.
+# Razorpay keys stay in the Next.js server environment.
+app.qr-price-paise=${QR_PRICE_PAISE:1000}
+
 # Optional Google OAuth (not wired yet)
 # spring.security.oauth2.client.registration.google.client-id=${GOOGLE_CLIENT_ID}
 # spring.security.oauth2.client.registration.google.client-secret=${GOOGLE_CLIENT_SECRET}

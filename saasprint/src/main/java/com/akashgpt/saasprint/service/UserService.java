@@ -5,6 +5,7 @@ import com.akashgpt.saasprint.model.request.RegisterUserRequest;
 import com.akashgpt.saasprint.repository.UserRepo;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.util.Locale;
 
 @Service
 public class UserService {
@@ -18,15 +19,16 @@ public class UserService {
     }
 
     public User saveUser(RegisterUserRequest request) {
+        String email = request.getEmail().trim().toLowerCase(Locale.ROOT);
         if (userRepo.existsByUsername(request.getUsername())) {
             throw new IllegalArgumentException("Username is already taken");
         }
-        if (userRepo.existsByEmail(request.getEmail())) {
+        if (userRepo.existsByEmail(email)) {
             throw new IllegalArgumentException("Email is already registered");
         }
 
         User user = new User();
-        user.setEmail(request.getEmail());
+        user.setEmail(email);
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         return userRepo.save(user);

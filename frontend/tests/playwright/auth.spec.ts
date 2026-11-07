@@ -7,14 +7,14 @@ test("sign-in validates fields, handles errors, and opens the workspace", async 
 	await page.route("**/auth/login", async (route) => {
 		attempts += 1;
 		expect(route.request().postDataJSON()).toEqual({
-			username: "cityprint",
+			email: "owner@example.com",
 			password: "printar-password",
 		});
 		await route.fulfill({
 			status: attempts === 1 ? 401 : 200,
 			json:
 				attempts === 1
-					? { message: "Invalid username or password" }
+					? { message: "Invalid email or password" }
 					: {
 							token: "test-token",
 							userid: "00000000-0000-4000-8000-000000000001",
@@ -24,11 +24,13 @@ test("sign-in validates fields, handles errors, and opens the workspace", async 
 	await page.goto("/login");
 	await page.getByRole("button", { name: "Sign in", exact: true }).click();
 	await expect(
-		page.getByText("Enter your username.", { exact: true }),
+		page.getByText("Enter a valid email address.", { exact: true }),
 	).toBeVisible();
-	await expect(page.getByLabel("Username", { exact: true })).toBeFocused();
+	await expect(page.getByLabel("Email address", { exact: true })).toBeFocused();
 	expect(attempts).toBe(0);
-	await page.getByLabel("Username", { exact: true }).fill("cityprint");
+	await page
+		.getByLabel("Email address", { exact: true })
+		.fill("owner@example.com");
 	await page.getByLabel("Password", { exact: true }).fill("printar-password");
 	await page.getByRole("button", { name: "Show password" }).click();
 	await expect(page.getByLabel("Password", { exact: true })).toHaveAttribute(
@@ -39,7 +41,7 @@ test("sign-in validates fields, handles errors, and opens the workspace", async 
 	await page.getByLabel("Password", { exact: true }).press("Enter");
 	await expect(
 		page.getByRole("form", { name: "Sign in" }).getByRole("alert"),
-	).toHaveText("Invalid username or password");
+	).toHaveText("Invalid email or password");
 	await expect(
 		page.getByRole("button", { name: "Sign in", exact: true }),
 	).toBeEnabled();
@@ -94,7 +96,7 @@ test("registration validates locally and confirms account creation on sign-in", 
 		.click();
 	await expect(page).toHaveURL(/\/login\?registered=1$/);
 	await expect(page.getByRole("status")).toHaveText(
-		"Your account is ready. Sign in with your new username and password.",
+		"Your account is ready. Sign in with your email and password.",
 	);
 	expect(attempts).toBe(2);
 });
@@ -118,7 +120,11 @@ test("auth pages fit desktop and mobile screens", async ({
 			await expect(
 				page.getByRole("heading", { name: heading, exact: true }),
 			).toBeVisible();
-			await expect(page.getByLabel("Username", { exact: true })).toBeVisible();
+			await expect(
+				page.getByLabel(path === "/login" ? "Email address" : "Username", {
+					exact: true,
+				}),
+			).toBeVisible();
 			expect(
 				await page.evaluate(
 					() => document.documentElement.scrollWidth <= window.innerWidth,
@@ -136,7 +142,11 @@ test("auth pages fit desktop and mobile screens", async ({
 	await page.setViewportSize({ width: 320, height: 568 });
 	for (const path of ["/login", "/register"]) {
 		await page.goto(path);
-		await expect(page.getByLabel("Username", { exact: true })).toBeVisible();
+		await expect(
+			page.getByLabel(path === "/login" ? "Email address" : "Username", {
+				exact: true,
+			}),
+		).toBeVisible();
 		expect(
 			await page.evaluate(
 				() => document.documentElement.scrollWidth <= window.innerWidth,
