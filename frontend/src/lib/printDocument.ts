@@ -5,47 +5,47 @@ export type PrintableDocument = Blob | string;
  * dialog after the document has loaded.
  */
 export function printDocument(source: PrintableDocument): void {
-  if (typeof window === "undefined" || typeof document === "undefined") {
-    return;
-  }
+	if (typeof window === "undefined" || typeof document === "undefined") {
+		return;
+	}
 
-  let objectUrl: string | null = null;
-  let documentUrl: string;
+	let objectUrl: string | null = null;
+	let documentUrl: string;
 
-  if (source instanceof Blob) {
-    objectUrl = URL.createObjectURL(source);
-    documentUrl = objectUrl;
-  } else {
-    documentUrl = source;
-  }
-  const iframe = document.createElement("iframe");
+	if (source instanceof Blob) {
+		objectUrl = URL.createObjectURL(source);
+		documentUrl = objectUrl;
+	} else {
+		documentUrl = source;
+	}
+	const iframe = document.createElement("iframe");
 
-  iframe.setAttribute("title", "Print document");
-  iframe.style.position = "fixed";
-  iframe.style.right = "0";
-  iframe.style.bottom = "0";
-  iframe.style.width = "0";
-  iframe.style.height = "0";
-  iframe.style.border = "0";
-  iframe.style.visibility = "hidden";
-  iframe.src = documentUrl;
+	iframe.setAttribute("title", "Print document");
+	iframe.style.position = "fixed";
+	iframe.style.right = "0";
+	iframe.style.bottom = "0";
+	iframe.style.width = "0";
+	iframe.style.height = "0";
+	iframe.style.border = "0";
+	iframe.style.visibility = "hidden";
+	iframe.src = documentUrl;
 
-  const cleanup = () => {
-    iframe.remove();
+	const cleanup = () => {
+		iframe.remove();
 
-    if (objectUrl) {
-      URL.revokeObjectURL(objectUrl);
-    }
-  };
+		if (objectUrl) {
+			URL.revokeObjectURL(objectUrl);
+		}
+	};
 
-  iframe.onload = () => {
-    window.setTimeout(() => {
-      iframe.contentWindow?.focus();
-      iframe.contentWindow?.print();
+	iframe.onload = () => {
+		window.setTimeout(() => {
+			iframe.contentWindow?.focus();
+			iframe.contentWindow?.print();
 
-      window.setTimeout(cleanup, 1_000);
-    }, 500);
-  };
+			window.setTimeout(cleanup, 1_000);
+		}, 500);
+	};
 
-  document.body.appendChild(iframe);
+	document.body.appendChild(iframe);
 }
