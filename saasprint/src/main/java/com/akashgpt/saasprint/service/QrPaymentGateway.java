@@ -2,6 +2,7 @@ package com.akashgpt.saasprint.service;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.JdkClientHttpRequestFactory;
@@ -34,9 +35,16 @@ public class QrPaymentGateway {
             int amount, String currency, @JsonProperty("amount_refunded") int amountRefunded) {}
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record Verification(boolean success, Payment payment) {}
-    public record Proof(@JsonProperty("razorpay_order_id") String orderId,
+    @Schema(description = "Razorpay checkout proof returned by the browser")
+    public record Proof(
+            @Schema(description = "Razorpay order ID", example = "order_Qwerty123")
+            @JsonProperty("razorpay_order_id") String orderId,
+            @Schema(description = "Razorpay payment ID", example = "pay_Qwerty123")
             @JsonProperty("razorpay_payment_id") String paymentId,
-            @JsonProperty("razorpay_signature") String signature) {}
+            @Schema(description = "Razorpay HMAC signature",
+                    example = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef")
+            @JsonProperty("razorpay_signature") String signature
+    ) {}
     public record CheckoutConfig(String keyId) {}
 
     public String keyId() {
