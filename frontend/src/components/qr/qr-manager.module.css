@@ -102,27 +102,6 @@
 .page .primary:hover {
 	background: #285949;
 }
-.demo {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	padding: 11px 15px;
-	border: 1px solid #dfdfc8;
-	border-radius: 8px;
-	background: #f3f1e5;
-	color: #756c45;
-	font-size: 11px;
-}
-.dot {
-	width: 6px;
-	height: 6px;
-	flex-shrink: 0;
-	border-radius: 50%;
-	background: #a78e4f;
-}
-.demo strong {
-	white-space: nowrap;
-}
 .stats {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr) 1.3fr;
@@ -566,13 +545,6 @@
 	}
 	.header .primary {
 		width: 100%;
-	}
-	.demo {
-		flex-wrap: wrap;
-		gap: 6px;
-	}
-	.demo > span:last-child {
-		flex-basis: 100%;
 	}
 	.stats {
 		margin-bottom: 28px;

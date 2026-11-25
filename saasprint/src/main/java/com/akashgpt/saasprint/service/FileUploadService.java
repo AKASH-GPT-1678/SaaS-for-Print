@@ -16,6 +16,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -74,20 +75,9 @@ public class FileUploadService {
     }
 
     public String uploadFile(MultipartFile file) {
-        if (file == null || file.isEmpty()) {
-            throw new IllegalArgumentException("File is required");
-        }
-
-        String originalName = file.getOriginalFilename() == null ? "file" : file.getOriginalFilename();
-        String extension = extensionOf(originalName);
-        if (!ALLOWED_EXTENSIONS.contains(extension)) {
-            throw new IllegalArgumentException("File type is not allowed");
-        }
-
+        validateDocument(file);
+        String originalName = safeFileName(file);
         String contentType = file.getContentType();
-        if (contentType != null && !ALLOWED_CONTENT_TYPES.contains(contentType)) {
-            throw new IllegalArgumentException("File content type is not allowed");
-        }
 
         String key = "uploads/" + UUID.randomUUID() + "-" + sanitizeFileName(originalName);
 
@@ -105,6 +95,36 @@ public class FileUploadService {
         } catch (Exception e) {
             throw new StorageException("Failed to upload file", e);
         }
+    }
+
+    public byte[] readDocument(MultipartFile file) {
+        validateDocument(file);
+        try {
+            return file.getBytes();
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Could not read the uploaded document", e);
+        }
+    }
+
+    public void validateDocument(MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("File is required");
+        }
+
+        String originalName = safeFileName(file);
+        String extension = extensionOf(originalName);
+        if (!ALLOWED_EXTENSIONS.contains(extension)) {
+            throw new IllegalArgumentException("File type is not allowed");
+        }
+
+        String contentType = file.getContentType();
+        if (contentType != null && !ALLOWED_CONTENT_TYPES.contains(contentType)) {
+            throw new IllegalArgumentException("File content type is not allowed");
+        }
+    }
+
+    private String safeFileName(MultipartFile file) {
+        return file.getOriginalFilename() == null ? "file" : file.getOriginalFilename();
     }
 
     public void deleteAllFiles(String bucketName) {
