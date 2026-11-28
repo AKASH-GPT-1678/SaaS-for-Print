@@ -1,0 +1,6 @@
+.git
+.idea
+.run
+target
+*.log
+src/main/resources/application.properties
