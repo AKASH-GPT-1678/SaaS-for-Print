@@ -2,6 +2,7 @@ package com.akashgpt.saasprint.service;
 
 import com.akashgpt.saasprint.exception.StorageException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -43,16 +44,16 @@ public class FileUploadService {
             "application/octet-stream"
     );
 
-    private final S3Client s3Client;
+    private final ObjectProvider<S3Client> s3ClientProvider;
 
-    @Value("${aws.region}")
+    @Value("${aws.region:eu-north-1}")
     private String region;
 
-    @Value("${aws.bucket.name}")
+    @Value("${aws.bucket.name:saasprint}")
     private String bucketName;
 
-    public FileUploadService(S3Client s3Client) {
-        this.s3Client = s3Client;
+    public FileUploadService(ObjectProvider<S3Client> s3ClientProvider) {
+        this.s3ClientProvider = s3ClientProvider;
     }
 
     public String uploadFile(BufferedImage image, String fileName) {
@@ -67,7 +68,7 @@ public class FileUploadService {
                     .contentType("image/png")
                     .build();
 
-            s3Client.putObject(putObjectRequest, RequestBody.fromBytes(imageBytes));
+            s3Client().putObject(putObjectRequest, RequestBody.fromBytes(imageBytes));
             return publicUrl(fileName);
         } catch (Exception e) {
             throw new StorageException("Failed to upload image", e);
@@ -88,7 +89,7 @@ public class FileUploadService {
                     .contentType(contentType != null ? contentType : "application/octet-stream")
                     .build();
 
-            s3Client.putObject(putObjectRequest, RequestBody.fromBytes(file.getBytes()));
+            s3Client().putObject(putObjectRequest, RequestBody.fromBytes(file.getBytes()));
             return publicUrl(key);
         } catch (StorageException e) {
             throw e;
@@ -132,6 +133,7 @@ public class FileUploadService {
                 .bucket(bucketName)
                 .build();
 
+        S3Client s3Client = s3Client();
         ListObjectsV2Response listResponse = s3Client.listObjectsV2(listRequest);
 
         if (listResponse.contents().isEmpty()) {
@@ -155,6 +157,14 @@ public class FileUploadService {
                 .build();
 
         s3Client.deleteObjects(deleteRequest);
+    }
+
+    private S3Client s3Client() {
+        S3Client client = s3ClientProvider.getIfAvailable();
+        if (client == null) {
+            throw new IllegalStateException("AWS storage is disabled. Set APP_AWS_ENABLED=true to enable it.");
+        }
+        return client;
     }
 
     private String publicUrl(String key) {

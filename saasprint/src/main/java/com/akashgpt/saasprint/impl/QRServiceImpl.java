@@ -27,11 +27,13 @@ public class QRServiceImpl implements QRService {
     private final QrPaymentGateway payments;
     private final String frontend;
     private final int price;
+    private final boolean awsStorageEnabled;
 
     public QRServiceImpl(DocumentService documents, UserRepo users, QRCodeRepo codes,
             FileUploadService storage, QrPaymentGateway payments,
             @Value("${app.frontend-base-url:http://localhost:3000}") String frontend,
-            @Value("${app.qr-price-paise:${QR_PRICE_PAISE:1000}}") int price) {
+            @Value("${app.qr-price-paise:${QR_PRICE_PAISE:1000}}") int price,
+            @Value("${app.aws.enabled:false}") boolean awsStorageEnabled) {
         this.documents = documents;
         this.users = users;
         this.codes = codes;
@@ -39,6 +41,7 @@ public class QRServiceImpl implements QRService {
         this.payments = payments;
         this.frontend = frontend;
         this.price = price;
+        this.awsStorageEnabled = awsStorageEnabled;
         if (price < 100)
             throw new IllegalArgumentException("QR price must be at least 100 paise");
     }
@@ -122,9 +125,11 @@ public class QRServiceImpl implements QRService {
             return documents.generateQRCode(qr.getQrCodeUrl());
         String destination = frontend.replaceAll("/$", "") + "/upload/" + qr.getUser().getId();
         BufferedImage image = documents.generateQRCode(destination);
-        String imageUrl = storage.uploadFile(image, "qr/" + qr.getId() + ".png");
+        if (awsStorageEnabled) {
+            String imageUrl = storage.uploadFile(image, "qr/" + qr.getId() + ".png");
+            qr.setQrStorageUrl(imageUrl);
+        }
         qr.setQrCodeUrl(destination);
-        qr.setQrStorageUrl(imageUrl);
         qr.setGeneratedAt(Instant.now());
         qr.setActive(true);
         codes.saveAndFlush(qr);

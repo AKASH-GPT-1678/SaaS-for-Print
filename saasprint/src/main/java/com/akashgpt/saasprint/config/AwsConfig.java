@@ -3,12 +3,14 @@ package com.akashgpt.saasprint.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 
 @Configuration
+@ConditionalOnProperty(prefix = "app.aws", name = "enabled", havingValue = "true")
 public class AwsConfig {
 
     @Value("${aws.access.key}")

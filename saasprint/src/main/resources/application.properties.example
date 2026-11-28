@@ -12,9 +12,11 @@ jwt.secret=${JWT_SECRET}
 app.cors.allowed-origins=${CORS_ALLOWED_ORIGINS:http://localhost:3000}
 app.frontend-base-url=${FRONTEND_BASE_URL:http://localhost:3000}
 
-# AWS S3 — set via environment, never commit real keys
-aws.access.key=${AWS_ACCESS_KEY}
-aws.secret.key=${AWS_SECRET_KEY}
+# AWS S3 is disabled by default. Set AWS_STORAGE_ENABLED=true and provide
+# credentials only if you want S3-backed QR image archival.
+app.aws.enabled=${AWS_STORAGE_ENABLED:false}
+aws.access.key=${AWS_ACCESS_KEY:}
+aws.secret.key=${AWS_SECRET_KEY:}
 aws.region=${AWS_REGION:eu-north-1}
 aws.bucket.name=${AWS_BUCKET:saasprint}
 
