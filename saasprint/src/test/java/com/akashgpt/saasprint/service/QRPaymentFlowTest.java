@@ -29,7 +29,7 @@ class QRPaymentFlowTest {
     QRCode qr;
 
     @BeforeEach void setup() {
-        service = new QRServiceImpl(documents, users, codes, storage, payments, "http://localhost:3000", 1000);
+        service = new QRServiceImpl(documents, users, codes, storage, payments, "http://localhost:3000", 1000, true);
         user = new User(); user.setId(UUID.randomUUID()); user.setUsername("shop");
         qr = new QRCode(); qr.setId(UUID.randomUUID()); qr.setUser(user); qr.setName("Front counter");
         qr.setPaymentOrderId("order_owned");

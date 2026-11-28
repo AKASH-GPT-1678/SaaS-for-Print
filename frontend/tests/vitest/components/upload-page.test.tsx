@@ -19,7 +19,9 @@ async function renderUploadPage() {
 			</Suspense>,
 		);
 	});
-	await screen.findByRole("heading", { name: "Upload Room" });
+	await screen.findByRole("heading", {
+		name: "Send your documents to the shop.",
+	});
 	const input = document.querySelector<HTMLInputElement>('input[type="file"]');
 	if (!input) throw new Error("Upload input was not rendered");
 	return { user, input };
@@ -32,8 +34,14 @@ describe("customer upload page", () => {
 
 	it("prevents sending when no document is selected", async () => {
 		await renderUploadPage();
-		expect(screen.getByRole("button", { name: "Send Files" })).toBeDisabled();
-		expect(screen.getByText("No files selected")).toBeInTheDocument();
+		expect(
+			screen.getByRole("button", {
+				name: /Send \d+ files? to the shop|Choose documents to continue/,
+			}),
+		).toBeDisabled();
+		expect(
+			screen.getByText("Your selected files will appear here."),
+		).toBeInTheDocument();
 		expect(fetch).not.toHaveBeenCalled();
 	});
 
@@ -44,10 +52,18 @@ describe("customer upload page", () => {
 			new File(["hello"], "notes.txt", { type: "text/plain" }),
 		);
 		expect(screen.getByText("notes.txt")).toBeInTheDocument();
-		expect(screen.getByRole("button", { name: "Send Files" })).toBeEnabled();
-		await user.click(screen.getByRole("button", { name: "Remove" }));
+		expect(
+			screen.getByRole("button", {
+				name: /Send \d+ files? to the shop|Choose documents to continue/,
+			}),
+		).toBeEnabled();
+		await user.click(screen.getByRole("button", { name: "Remove notes.txt" }));
 		expect(screen.queryByText("notes.txt")).not.toBeInTheDocument();
-		expect(screen.getByRole("button", { name: "Send Files" })).toBeDisabled();
+		expect(
+			screen.getByRole("button", {
+				name: /Send \d+ files? to the shop|Choose documents to continue/,
+			}),
+		).toBeDisabled();
 	});
 
 	it("sends the document to the right receiver and clears it after success", async () => {
@@ -55,18 +71,53 @@ describe("customer upload page", () => {
 		const { user, input } = await renderUploadPage();
 		const file = new File(["hello"], "notes.txt", { type: "text/plain" });
 		await user.upload(input, file);
-		await user.click(screen.getByRole("button", { name: "Send Files" }));
+		await user.click(
+			screen.getByRole("button", {
+				name: /Send \d+ files? to the shop|Choose documents to continue/,
+			}),
+		);
 		expect(
-			await screen.findByText("Files sent successfully."),
+			await screen.findByText("Files sent to the shop."),
 		).toBeInTheDocument();
 		expect(fetch).toHaveBeenCalledOnce();
 		const [url, options] = vi.mocked(fetch).mock.calls[0];
 		expect(url).toBe("http://api.test/docs/upload");
 		expect(options?.method).toBe("POST");
-		const body = options?.body as FormData;
+		if (!options) throw new Error("Upload request options were not provided");
+		const body = options.body as FormData;
 		expect(body.get("receiverId")).toBe(receiverId);
 		expect(body.get("file")).toBe(file);
-		expect(screen.getByText("No files selected")).toBeInTheDocument();
+		expect(body.has("note")).toBe(false);
+		expect(
+			screen.getByText("Your selected files will appear here."),
+		).toBeInTheDocument();
+	});
+
+	it("sends the optional note with each selected file and clears it on success", async () => {
+		vi.mocked(fetch).mockImplementation(async () => new Response("{}"));
+		const { user, input } = await renderUploadPage();
+		const note = screen.getByRole("textbox", {
+			name: "Note for the shop (optional)",
+		});
+		await user.type(note, "  Aman, please print 2 copies  ");
+		await user.upload(input, [
+			new File(["first"], "first.txt", { type: "text/plain" }),
+			new File(["second"], "second.txt", { type: "text/plain" }),
+		]);
+		await user.click(
+			screen.getByRole("button", {
+				name: /Send \d+ files? to the shop|Choose documents to continue/,
+			}),
+		);
+		await screen.findByText("Files sent to the shop.");
+		expect(fetch).toHaveBeenCalledTimes(2);
+		for (const [, options] of vi.mocked(fetch).mock.calls) {
+			if (!options) throw new Error("Upload request options were not provided");
+			expect((options.body as FormData).get("note")).toBe(
+				"Aman, please print 2 copies",
+			);
+		}
+		expect(note).toHaveValue("");
 	});
 
 	it("keeps the document selected and shows the backend error on failure", async () => {
@@ -76,14 +127,27 @@ describe("customer upload page", () => {
 			}),
 		);
 		const { user, input } = await renderUploadPage();
+		const note = screen.getByRole("textbox", {
+			name: "Note for the shop (optional)",
+		});
+		await user.type(note, "Please print 2 copies");
 		await user.upload(
 			input,
 			new File(["hello"], "notes.txt", { type: "text/plain" }),
 		);
-		await user.click(screen.getByRole("button", { name: "Send Files" }));
+		await user.click(
+			screen.getByRole("button", {
+				name: /Send \d+ files? to the shop|Choose documents to continue/,
+			}),
+		);
 		expect(await screen.findByText("Receiver not found")).toBeInTheDocument();
+		expect(note).toHaveValue("Please print 2 copies");
 		expect(screen.getByText("notes.txt")).toBeInTheDocument();
-		expect(screen.getByRole("button", { name: "Send Files" })).toBeEnabled();
+		expect(
+			screen.getByRole("button", {
+				name: /Send \d+ files? to the shop|Choose documents to continue/,
+			}),
+		).toBeEnabled();
 	});
 
 	it("blocks duplicate submissions while the upload is pending", async () => {
@@ -99,8 +163,14 @@ describe("customer upload page", () => {
 			input,
 			new File(["hello"], "notes.txt", { type: "text/plain" }),
 		);
-		await user.click(screen.getByRole("button", { name: "Send Files" }));
-		const sendingButton = screen.getByRole("button", { name: "Sending..." });
+		await user.click(
+			screen.getByRole("button", {
+				name: /Send \d+ files? to the shop|Choose documents to continue/,
+			}),
+		);
+		const sendingButton = screen.getByRole("button", {
+			name: "Sending your files…",
+		});
 		expect(sendingButton).toBeDisabled();
 		await user.click(sendingButton);
 		expect(fetch).toHaveBeenCalledOnce();
@@ -108,7 +178,7 @@ describe("customer upload page", () => {
 			finishUpload(new Response("{}", { status: 200 }));
 		});
 		expect(
-			await screen.findByText("Files sent successfully."),
+			await screen.findByText("Files sent to the shop."),
 		).toBeInTheDocument();
 	});
 });

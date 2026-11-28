@@ -1,4 +1,8 @@
+"use client";
 import { DM_Sans, Manrope } from "next/font/google";
+import { useRouter } from "next/navigation";
+import React from "react";
+import { useAuthStore } from "@/stores/auth-store";
 import { LandingFooter } from "./LandingFooter";
 import { LandingHeader } from "./LandingHeader";
 import { LandingHero } from "./LandingHero";
@@ -23,6 +27,16 @@ const manrope = Manrope({
 });
 
 export function LandingPage() {
+	const router = useRouter();
+	const isHydrated = useAuthStore((state) => state.isHydrated);
+	const token = useAuthStore((state) => state.token);
+
+	React.useEffect(() => {
+		if (isHydrated && token) {
+			router.replace("/dashboard");
+		}
+	}, [isHydrated, token, router]);
+
 	return (
 		<div className={`${cx("landing")} ${dmSans.variable} ${manrope.variable}`}>
 			<LandingHeader />

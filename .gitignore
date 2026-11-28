@@ -6,3 +6,4 @@ saasprint/src/main/resources/application.properties
 /.pnpm-store/
 /node_modules/
 design
+localnotes.md

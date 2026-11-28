@@ -32,38 +32,11 @@ type Code = {
 	location: string;
 	active: boolean;
 	created: string;
-	demo?: boolean;
 	image?: string | null;
 	qrCodeUrl?: string | null;
 	paymentStatus?: SavedQr["paymentStatus"];
 	generatedAt?: string | null;
 };
-const examples: Code[] = [
-	{
-		id: "demo-counter",
-		demo: true,
-		name: "Main counter",
-		location: "At the checkout desk",
-		active: true,
-		created: "2026-10-27",
-	},
-	{
-		id: "demo-window",
-		demo: true,
-		name: "Shop window",
-		location: "For customers walking in",
-		active: true,
-		created: "2026-10-26",
-	},
-	{
-		id: "demo-spare",
-		demo: true,
-		name: "Spare counter",
-		location: "Ready for the next busy day",
-		active: false,
-		created: "2026-10-25",
-	},
-];
 
 function toCode(qr: SavedQr): Code {
 	return {
@@ -71,41 +44,6 @@ function toCode(qr: SavedQr): Code {
 		location: "Document upload",
 		created: qr.createdAt.slice(0, 10),
 	};
-}
-
-// Deliberately illustrative: demo artwork must not be mistaken for a live upload code.
-function DemoQr() {
-	return (
-		<svg
-			viewBox="0 0 120 120"
-			role="img"
-			aria-label="Illustrative QR pattern, not scannable"
-			fill="currentColor"
-		>
-			<rect width="120" height="120" fill="white" />
-			{[
-				[10, 10],
-				[78, 10],
-				[10, 78],
-			].map(([x, y]) => (
-				<g key={`${x}-${y}`}>
-					<rect x={x} y={y} width="32" height="32" rx="2" />
-					<rect x={x + 5} y={y + 5} width="22" height="22" fill="white" />
-					<rect x={x + 10} y={y + 10} width="12" height="12" />
-				</g>
-			))}
-			{Array.from({ length: 225 }, (_, i) => {
-				const x = 10 + (i % 15) * 7;
-				const y = 10 + Math.floor(i / 15) * 7;
-				return (x < 45 && y < 45) ||
-					(x > 73 && y < 45) ||
-					(x < 45 && y > 73) ||
-					(i * 17 + Math.floor(i / 15) * 13) % 7 > 3 ? null : (
-					<rect key={`${x}-${y}`} x={x} y={y} width="5" height="5" />
-				);
-			})}
-		</svg>
-	);
 }
 
 export default function QrManager() {
@@ -118,13 +56,10 @@ export default function QrManager() {
 	const [search, setSearch] = useState("");
 	const [filter, setFilter] = useState("all");
 	const [notice, setNotice] = useState("");
-	const [modal, setModal] = useState<
-		"create" | "edit" | "view" | "delete" | null
-	>(null);
+	const [modal, setModal] = useState<"create" | "view" | null>(null);
 	const [selected, setSelected] = useState<Code | null>(null);
 	const [name, setName] = useState("");
 	const dialog = useRef<HTMLDialogElement>(null);
-	const artwork = useRef<HTMLDivElement>(null);
 	const {
 		getQrCodes,
 		createQr,
@@ -134,11 +69,10 @@ export default function QrManager() {
 		error,
 		progress,
 	} = useQRCodes();
-	const demoMode = loaded && codes.every((c) => c.demo);
 	async function refreshCodes() {
 		try {
 			const saved = await getQrCodes();
-			setCodes(saved.length ? saved.map(toCode) : examples);
+			setCodes(saved.map(toCode));
 			setLoaded(true);
 			setLoadError("");
 		} catch (err) {
@@ -154,7 +88,7 @@ export default function QrManager() {
 		void getQrCodes(controller.signal)
 			.then((saved) => {
 				if (!cancelled) {
-					setCodes(saved.length ? saved.map(toCode) : examples);
+					setCodes(saved.map(toCode));
 					setLoaded(true);
 					setLoadError("");
 				}
@@ -195,16 +129,6 @@ export default function QrManager() {
 			busy
 		)
 			return;
-		if (modal === "edit" && selected) {
-			setCodes(
-				codes.map((c) =>
-					c.id === selected.id ? { ...c, name: name.trim() } : c,
-				),
-			);
-			setNotice("Demo collection updated.");
-			setModal(null);
-			return;
-		}
 		// Close the native dialog so the existing Razorpay checkout can receive input.
 		setModal(null);
 		dialog.current?.close();
@@ -212,27 +136,12 @@ export default function QrManager() {
 		await refreshCodes();
 	}
 	function download() {
-		if (selected?.image) {
-			const anchor = document.createElement("a");
-			anchor.href = selected.image;
-			anchor.download = `printar-qr-${selected.id}.png`;
-			anchor.click();
-			setNotice("QR image downloaded.");
-			return;
-		}
-		const svg = artwork.current?.querySelector("svg");
-		if (!svg) return;
-		const url = URL.createObjectURL(
-			new Blob([new XMLSerializer().serializeToString(svg)], {
-				type: "image/svg+xml",
-			}),
-		);
+		if (!selected?.image) return;
 		const anchor = document.createElement("a");
-		anchor.href = url;
-		anchor.download = "printar-demo-qr-not-scannable.svg";
+		anchor.href = selected.image;
+		anchor.download = `printar-qr-${selected.id}.png`;
 		anchor.click();
-		setTimeout(() => URL.revokeObjectURL(url), 1000);
-		setNotice("Demo artwork downloaded. It is not a live QR code.");
+		setNotice("QR image downloaded.");
 	}
 	if (!hydrated || !token)
 		return <main className={styles.page}>Loading your workspace…</main>;
@@ -272,16 +181,6 @@ export default function QrManager() {
 						<Plus size={18} /> Create QR code
 					</button>
 				</header>
-				{demoMode && (
-					<div className={styles.demo}>
-						<span className={styles.dot} />
-						<strong>Demo workspace</strong>
-						<span>
-							Sample cards are shown until you create a paid QR. Creating a new
-							code opens real payment checkout.
-						</span>
-					</div>
-				)}
 				{(error || loadError) && (
 					<div className={styles.error} role="alert">
 						{error || loadError}
@@ -301,11 +200,7 @@ export default function QrManager() {
 				<section className={styles.stats} aria-label="QR summary">
 					{[
 						["Total QR codes", codes.length, "Your collection"],
-						[
-							"Active",
-							active,
-							demoMode ? "Ready to share · demo" : "Ready to share",
-						],
+						["Active", active, "Ready to share"],
 						[
 							"Not active",
 							codes.length - active,
@@ -314,7 +209,7 @@ export default function QrManager() {
 					].map(([label, count, description]) => (
 						<div key={label}>
 							<span>{label}</span>
-							<strong>{String(count).padStart(2, "0")}</strong>
+							<strong>{count}</strong>
 							<small>{description}</small>
 						</div>
 					))}
@@ -358,35 +253,23 @@ export default function QrManager() {
 								{value === "all" ? "All codes" : value}
 							</button>
 						))}
-						<span>
-							{demoMode ? "DEMO DATA · SAMPLE CARDS" : "YOUR SAVED QR CODES"}
-						</span>
 					</div>
 					<div className={styles.grid}>
 						{visible.map((code) => (
 							<article className={styles.card} key={code.id}>
 								<div className={styles.cardTop}>
 									<span className={code.active ? styles.active : styles.paused}>
-										{code.demo
-											? code.active
-												? "Active"
-												: "Paused"
-											: code.active
-												? "Active"
-												: code.paymentStatus === "PAID"
-													? "Ready to generate"
-													: "Payment pending"}
+										{code.active
+											? "Active"
+											: code.paymentStatus === "PAID"
+												? "Ready to generate"
+												: "Payment pending"}
 									</span>
 									<button
 										type="button"
 										aria-label={`Edit ${code.name}`}
-										disabled={!code.demo || busy}
-										title={
-											!code.demo
-												? "Editing saved codes is coming soon"
-												: undefined
-										}
-										onClick={() => open("edit", code)}
+										disabled
+										title="Editing saved codes is coming soon"
 									>
 										<Pencil size={16} />
 									</button>
@@ -395,12 +278,10 @@ export default function QrManager() {
 									type="button"
 									className={styles.preview}
 									aria-label={`Preview ${code.name}`}
-									disabled={!code.demo && !code.image}
+									disabled={!code.image}
 									onClick={() => open("view", code)}
 								>
-									{code.demo ? (
-										<DemoQr />
-									) : code.image ? (
+									{code.image ? (
 										<Image
 											src={code.image}
 											width={128}
@@ -412,11 +293,9 @@ export default function QrManager() {
 										<QrCode size={80} />
 									)}
 									<span>
-										{code.demo
-											? "ILLUSTRATIVE QR · DEMO"
-											: code.image
-												? "SCAN TO SEND DOCUMENTS"
-												: "COMPLETE PAYMENT TO GENERATE"}
+										{code.image
+											? "SCAN TO SEND DOCUMENTS"
+											: "COMPLETE PAYMENT TO GENERATE"}
 									</span>
 								</button>
 								<div className={styles.cardBody}>
@@ -427,7 +306,7 @@ export default function QrManager() {
 										<span>Document upload</span>
 									</div>
 									<div className={styles.cardActions}>
-										{!code.demo && !code.image ? (
+										{!code.image ? (
 											<>
 												<button
 													type="button"
@@ -461,36 +340,17 @@ export default function QrManager() {
 										)}
 										<button
 											type="button"
-											disabled={!code.demo || busy}
-											title={
-												!code.demo
-													? "Pausing saved codes is coming soon"
-													: undefined
-											}
-											onClick={() => {
-												setCodes(
-													codes.map((c) =>
-														c.id === code.id ? { ...c, active: !c.active } : c,
-													),
-												);
-												setNotice(
-													`${code.name} ${code.active ? "paused" : "activated"} in this demo.`,
-												);
-											}}
+											disabled
+											title="Pausing saved codes is coming soon"
 											aria-label={`${code.active ? "Pause" : "Activate"} ${code.name}`}
 										>
 											{code.active ? <Pause size={16} /> : <Play size={16} />}
 										</button>
 										<button
 											type="button"
-											disabled={!code.demo || busy}
-											title={
-												!code.demo
-													? "Deleting saved codes is coming soon"
-													: undefined
-											}
+											disabled
+											title="Deleting saved codes is coming soon"
 											className={styles.danger}
-											onClick={() => open("delete", code)}
 											aria-label={`Delete ${code.name}`}
 										>
 											<Trash2 size={16} />
@@ -499,7 +359,7 @@ export default function QrManager() {
 								</div>
 							</article>
 						))}
-						{!search && filter === "all" && (
+						{loaded && (!codes.length || (!search && filter === "all")) && (
 							<button
 								type="button"
 								className={styles.addCard}
@@ -509,10 +369,13 @@ export default function QrManager() {
 								<span>
 									<Plus size={24} />
 								</span>
-								<strong>One more place to connect.</strong>
+								<strong>
+									{codes.length ? "Add another QR code" : "No QR codes yet"}
+								</strong>
 								<p>
-									Create a QR for another counter,
-									<br />a window, or a printed sign.
+									{codes.length
+										? "Create a code for another spot in your shop."
+										: "Create your first QR code for customers to send documents."}
 								</p>
 								<b>
 									Create QR code <ArrowUpRight size={16} />
@@ -520,19 +383,11 @@ export default function QrManager() {
 							</button>
 						)}
 					</div>
-					{visible.length === 0 && (
+					{codes.length > 0 && visible.length === 0 && (
 						<div className={styles.empty}>
 							<QrCode size={32} />
-							<h3>
-								{codes.length
-									? "No matching codes"
-									: "A fresh start for your collection"}
-							</h3>
-							<p>
-								{codes.length
-									? "Try a different search or filter."
-									: "Create your first QR code using the button above."}
-							</p>
+							<h3>No matching codes</h3>
+							<p>Try a different search or filter.</p>
 						</div>
 					)}
 				</section>
@@ -562,7 +417,7 @@ export default function QrManager() {
 				>
 					<X size={20} />
 				</button>
-				{(modal === "create" || modal === "edit") && (
+				{modal === "create" && (
 					<form
 						onSubmit={(event) => {
 							event.preventDefault();
@@ -570,7 +425,7 @@ export default function QrManager() {
 						}}
 					>
 						<p className={styles.eyebrow}>YOUR NEXT TOUCHPOINT</p>
-						<h2>{modal === "edit" ? "Edit QR details" : "Create a QR code"}</h2>
+						<h2>Create a QR code</h2>
 						<p>Give this code a name that is easy to recognise.</p>
 						<label>
 							Name
@@ -584,22 +439,15 @@ export default function QrManager() {
 							/>
 						</label>
 						<small>
-							{modal === "edit"
-								? "Changes apply to this sample card only."
-								: "Continue to payment. Your QR is generated after payment is verified. The amount is shown in checkout."}
+							Continue to payment. Your QR is generated after payment is
+							verified. The amount is shown in checkout.
 						</small>
-						{modal === "edit" ? (
-							<button className={styles.primary} type="submit">
-								Save changes
-							</button>
-						) : (
-							<CheckoutButton
-								className={styles.primary}
-								disabled={busy}
-								label="Pay & create QR"
-								onPayment={submitQr}
-							/>
-						)}
+						<CheckoutButton
+							className={styles.primary}
+							disabled={busy}
+							label="Pay & create QR"
+							onPayment={submitQr}
+						/>
 					</form>
 				)}
 				{modal === "view" && selected && (
@@ -607,8 +455,8 @@ export default function QrManager() {
 						<p className={styles.eyebrow}>QR PREVIEW</p>
 						<h2>{selected.name}</h2>
 						<p>{selected.location}</p>
-						<div ref={artwork} className={styles.largeQr}>
-							{selected.image ? (
+						<div className={styles.largeQr}>
+							{selected.image && (
 								<Image
 									src={selected.image}
 									width={220}
@@ -616,37 +464,25 @@ export default function QrManager() {
 									alt={`Upload QR for ${selected.name}`}
 									unoptimized
 								/>
-							) : (
-								<DemoQr />
 							)}
 						</div>
-						<p>
-							{selected.demo
-								? "Illustrative artwork — not scannable."
-								: "Customers can scan this code to send documents to your shop."}
-						</p>
+						<p>Customers can scan this code to send documents to your shop.</p>
 						<div className={styles.dialogActions}>
 							<button
 								type="button"
 								className={styles.primary}
 								onClick={download}
 							>
-								<Download size={16} />{" "}
-								{selected.demo ? "Download demo SVG" : "Download QR PNG"}
+								<Download size={16} /> Download QR PNG
 							</button>
 							<button
 								type="button"
+								disabled={!selected.qrCodeUrl}
 								onClick={async () => {
+									if (!selected.qrCodeUrl) return;
 									try {
-										await navigator.clipboard.writeText(
-											selected.qrCodeUrl ||
-												`https://example.com/demo/${selected.id}`,
-										);
-										setNotice(
-											selected.demo
-												? "Example link copied. This is not a live upload link."
-												: "Shop upload link copied.",
-										);
+										await navigator.clipboard.writeText(selected.qrCodeUrl);
+										setNotice("Shop upload link copied.");
 									} catch {
 										setNotice(
 											"Clipboard unavailable. Please try again in a supported browser.",
@@ -654,34 +490,7 @@ export default function QrManager() {
 									}
 								}}
 							>
-								<Copy size={16} />{" "}
-								{selected.demo ? "Copy example link" : "Copy upload link"}
-							</button>
-						</div>
-					</div>
-				)}
-				{modal === "delete" && selected && (
-					<div>
-						<p className={styles.eyebrow}>REMOVE FROM COLLECTION</p>
-						<h2>Delete “{selected.name}”?</h2>
-						<p>
-							This removes the code from this demo. No real QR code or customer
-							file will be affected.
-						</p>
-						<div className={styles.dialogActions}>
-							<button type="button" onClick={() => setModal(null)}>
-								Keep code
-							</button>
-							<button
-								type="button"
-								className={styles.deleteButton}
-								onClick={() => {
-									setCodes(codes.filter((c) => c.id !== selected.id));
-									setModal(null);
-									setNotice("Demo code deleted.");
-								}}
-							>
-								Delete demo code
+								<Copy size={16} /> Copy upload link
 							</button>
 						</div>
 					</div>

@@ -22,7 +22,7 @@ class OpenApiAnnotationsTest {
 
     @Test
     void describesDocumentUploadAsMultipart() throws NoSuchMethodException {
-        var method = FileController.class.getMethod("uploadFile", MultipartFile.class, UUID.class);
+        var method = FileController.class.getMethod("uploadFile", MultipartFile.class, UUID.class, String.class);
         var mapping = method.getAnnotation(PostMapping.class);
 
         assertArrayEquals(new String[] {MediaType.MULTIPART_FORM_DATA_VALUE}, mapping.consumes());
